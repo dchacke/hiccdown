@@ -12,7 +12,7 @@ module Hiccdown
       end.join(' ')
     elsif structure.is_a? Array
       if structure[1].is_a? Hash
-        tag, attrs, *children = structure.map { |s| to_html s}
+        tag, attrs, *children = structure.map { |s| to_html s }
         tag_and_attrs = structure[1].any? ? [tag, ' ', attrs].join : tag
       else
         tag, *children = structure.map { |s| to_html s}
