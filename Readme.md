@@ -42,6 +42,8 @@ class FooController < ApplicationController
 end
 ```
 
+(Be careful with `html_safe`.)
+
 ## Why?
 
 If you're used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
