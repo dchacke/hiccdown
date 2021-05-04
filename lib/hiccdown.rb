@@ -15,7 +15,7 @@ module Hiccdown
         tag, attrs, *children = structure.map { |s| to_html s }
         tag_and_attrs = structure[1].any? ? [tag, ' ', attrs].join : tag
       else
-        tag, *children = structure.map { |s| to_html s}
+        tag, *children = structure.map { |s| to_html s }
       end
 
       if standalone_tags.include? tag.to_sym
