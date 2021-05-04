@@ -11,6 +11,10 @@ module Hiccdown
         acc + [[key.to_s, '="', val.to_s, '"'].join]
       end.join(' ')
     elsif structure.is_a? Array
+      if structure.first.is_a?(Array)
+        return structure.map { |s| to_html s }.join
+      end
+
       if structure[1].is_a? Hash
         tag, attrs, *children = structure.map { |s| to_html s }
         tag_and_attrs = structure[1].any? ? [tag, ' ', attrs].join : tag
