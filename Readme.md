@@ -56,7 +56,7 @@ Consider this template:
 </ul>
 ```
 
-This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague would call it. This problem is well known and embraced in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
+This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague would call it. This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
 
 Hiccdown makes this happen by taking a datastructure representing your template – which you're free to build up logically in any way you like, using the full power of the Ruby programming language (`map`, `filter`, `reduce` etc) – and then turning that into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
 
