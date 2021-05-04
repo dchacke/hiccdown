@@ -2,14 +2,6 @@ require 'minitest/autorun'
 require 'hiccdown'
 
 class HiccdownTest < Minitest::Test
-  # def test_convert_standalone_tag
-  #   assert_equal Hiccdown::to_html([:img]), '<img>'
-  # end
-
-  def test_convert_solo_tag
-    assert_equal Hiccdown::to_html([:p]), '<p></p>'
-  end
-
   def test_convert_tag_with_attrs_but_no_content
     assert_equal Hiccdown::to_html([:p, {class: 'foo'}]), '<p class="foo"></p>'
   end
@@ -29,5 +21,9 @@ class HiccdownTest < Minitest::Test
       ),
       '<p class="foo"><span class="bar">baz</span><a href="#foo">link</a></p>'
     )
+  end
+
+  def test_standalone_tag_without_attrs
+    assert_equal '<img/>', Hiccdown::to_html([:img])
   end
 end

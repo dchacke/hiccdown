@@ -1,6 +1,8 @@
+require 'byebug'
+
 module Hiccdown
-  def standalone_tags
-    Set.new(:area, :base, :br, :col, :command, :embed, :hr, :img, :input, :keygen, :link, :menuitem, :meta, :param, :source, :track, :wbr)
+  def self.standalone_tags
+    Set.new([:area, :base, :br, :col, :command, :embed, :hr, :img, :input, :keygen, :link, :menuitem, :meta, :param, :source, :track, :wbr])
   end
 
   def self.to_html structure
@@ -16,7 +18,11 @@ module Hiccdown
         tag, *children = structure.map { |s| to_html s}
       end
 
-      ['<', tag_and_attrs || tag, '>', children.join, '</', tag, '>'].join
+      if standalone_tags.include? tag.to_sym
+        ['<', tag_and_attrs || tag, '/>'].join
+      else
+        ['<', tag_and_attrs || tag, '>', children.join, '</', tag, '>'].join
+      end
     else
       structure.to_s
     end
