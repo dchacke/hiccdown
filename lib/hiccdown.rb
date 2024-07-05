@@ -1,5 +1,3 @@
-require 'byebug'
-
 module Hiccdown
   def self.standalone_tags
     Set.new([:area, :base, :br, :col, :command, :embed, :hr, :img, :input, :keygen, :link, :menuitem, :meta, :param, :source, :track, :wbr])
