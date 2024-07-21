@@ -182,6 +182,8 @@ Hiccdown escapes HTML characters for you in attribute values and primitive child
 Hiccdown::to_html([:h1, '<script>alert("pwned");</script>'], false)
 ```
 
+Hiccdown does not escape strings marked as `html_safe`.
+
 ## License
 
 MIT

@@ -1,4 +1,5 @@
 require 'cgi'
+require 'active_support/core_ext/string/output_safety'
 
 module Hiccdown
   def self.standalone_tags
@@ -33,7 +34,7 @@ module Hiccdown
   end
 
   def self.maybe_escape escapable, escape
-    if escape
+    if escape && !escapable.html_safe?
       CGI::escapeHTML(escapable)
     else
       escapable

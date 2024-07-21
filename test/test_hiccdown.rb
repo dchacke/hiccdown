@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require 'hiccdown'
+require 'active_support/core_ext/string/output_safety'
 
 class HiccdownTest < Minitest::Test
   def test_convert_tag_with_attrs_but_no_content
@@ -37,6 +38,10 @@ class HiccdownTest < Minitest::Test
 
   def test_no_escape
     assert_equal '<div class="foo"bar"><baz></div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'], false)
+  end
+
+  def test_no_escape_when_marked_html_safe
+    assert_equal('<div>&lt;this is escaped&gt;<span><but this isn’t></span></div>', Hiccdown::to_html([:div, '<this is escaped>', [:span, '<but this isn’t>'.html_safe]]))
   end
 
   def test_filters_out_nil
