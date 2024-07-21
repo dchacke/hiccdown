@@ -1,8 +1,49 @@
 # Hiccdown
 
-Hiccdown is a very simple gem that parses Ruby arrays and turns them into HTML strings.
+Hiccdown is a simple Ruby gem that parses arrays and turns them into HTML strings.
+
+In Rails, it solves a major problem nobody talks about.
 
 The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same (?) functionality in Ruby.
+
+## The problem
+
+If you're used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
+
+Consider this template:
+
+```erb
+<ul>
+  <% [1, 2, 3].each do |i| %>
+    <li><%= i %></li>
+  <% end %>
+</ul>
+```
+
+This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague of mine calls it.
+
+This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
+
+Hiccdown takes a datastructure representing your template – which you're free to build up programmatically in any way you like, using the full power of Ruby (`map`, `filter`, `reduce` etc) – and then turns that datastructure into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
+
+Compare the above `erb` syntax with this simple but functionally equivalent Hiccdown syntax:
+
+```ruby
+[:ul, [1, 2, 3].map { |i| [:li, i] }]
+```
+
+Here are some of the benefits of Hiccdown:
+
+1. Clean separation of logic and presentation – never write HTML again
+2. More concise, Ruby-native syntax
+3. Easier programmatic manipulation of content – data is easier to traverse and manipulate than HTML strings
+4. Simplified post-processing without additional parsing libraries
+5. Reduced risk of HTML-injection vulnerabilities
+6. Better composability and reusability of components
+7. Easier to generate dynamic structures
+8. Enhanced static analysis capabilities
+
+Once you understand these benefits, you’ll realize, for example, that Rails having *both* helper methods *and* view partials has always been a code smell – see below.
 
 ## Installation
 
@@ -14,7 +55,7 @@ gem 'hiccdown'
 
 Then `$ bundle`.
 
-## Usage
+## Usage in Ruby
 
 ```ruby
 # plain
@@ -121,27 +162,7 @@ module ProductsHelper
 end
 ```
 
-As you can see above, Hiccdown eliminates the need for view *partials*, as well.
-
-## Why?
-
-If you're used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
-
-Consider this template:
-
-```erb
-<ul>
-  <% [1, 2, 3].each do |i| %>
-    <li><%= i %></li>
-  <% end %>
-</ul>
-```
-
-This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague of mine calls it. This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
-
-That both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
-
-Hiccdown takes a datastructure representing your template – which you're free to build up logically in any way you like, using the full power of the Ruby programming language (`map`, `filter`, `reduce` etc) – and then turns that into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
+As you can see above, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
 
 ## HTML escape
 
