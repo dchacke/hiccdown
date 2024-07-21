@@ -97,7 +97,7 @@ end
 
 ## Usage with Rails helper methods
 
-Hiccdown plays well with native Rails helper methods. In fact, it eliminates the need for view partials. (That both partial *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering, see “Why?” below.)
+Hiccdown plays well with native Rails helper methods. In fact, it eliminates the need for view partials. (That both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering, see “Why?” below.)
 
 ```ruby
 module ApplicationHelper
@@ -113,13 +113,14 @@ end
 ```
 
 ```ruby
-# hello.hdml
+# bar.hdml
 list(@items)
 ```
 
 Helper methods can naturally be combined:
 
 ```ruby
+# bar.hdml
 [foo(@bar), baz(@bar), [:div, bar(@foo)]]
 ```
 
@@ -143,7 +144,11 @@ Hiccdown makes this happen by taking a datastructure representing your template 
 
 ## HTML escape
 
-Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter: `Hiccdown::to_html([:h1, '<script>alert("pawned");</script>'], false)`
+Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
+
+```ruby
+Hiccdown::to_html([:h1, '<script>alert("pawned");</script>'], false)
+```
 
 ## License
 
