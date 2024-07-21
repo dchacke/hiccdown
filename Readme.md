@@ -102,23 +102,25 @@ class ProductsController < ApplicationController
 end
 ```
 
-Hiccdown then calls the `index` and `show` methods on the `ProductsHelper`:
+Hiccdown then calls the `index` and `show` methods on the `ProductsHelper` and generates the corresponding HTML:
 
 ```ruby
 module ProductsHelper
   def index
     [:ul, @products.map { |product| [:li, product.description] }]
+    # => Renders '<ul><li>…</li>…</ul>'
   end
 
   def show
     [:div
       [:h1, @product.title]
       [:span, @product.description]]
+    # => Renders '<div><h1>…</h1><span>…</span></div>'
   end
 end
 ```
 
-Should you call `render` explicitly, however, Hiccdown will not call the corresponding helper method.
+Should you call `render` explicitly, however, Hiccdown will not call the corresponding helper method. You remain in control.
 
 You can also call Hiccdown directly in your controller:
 
@@ -146,7 +148,7 @@ Since Hiccdown code lives inside helpers anyway, simply use additional helper me
 ```ruby
 module ProductsHelper
   def index
-    [:ul, @products.map { |p| (product(p) }] # calls product method below
+    [:ul, @products.map { |p| (product(p) }] # calls `product` method below
   end
 
   def show
@@ -162,14 +164,14 @@ module ProductsHelper
 end
 ```
 
-As you can see above, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
+As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
 
 ## HTML escape
 
 Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
 
 ```ruby
-Hiccdown::to_html([:h1, '<script>alert("pawned");</script>'], false)
+Hiccdown::to_html([:h1, '<script>alert("pwned");</script>'], false)
 ```
 
 ## License
