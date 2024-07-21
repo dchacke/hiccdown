@@ -172,7 +172,7 @@ As you can see, Hiccdown eliminates the need for view *partials*, as well. Again
 
 ## Gradual rollout
 
-You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would.
+You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would. Once you’ve migrated a template, simply delete it to render the helper method instead.
 
 ## HTML escape
 
