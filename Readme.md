@@ -164,7 +164,7 @@ module ProductsHelper
 end
 ```
 
-As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
+As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering. This fudge leads to situations where, for instance, you’re not sure if you should make a partial that calls helper methods or create a helper method that calls `content_tag`.
 
 ## HTML escape
 
