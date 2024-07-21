@@ -13,9 +13,10 @@ module Hiccdown
     included do
       alias_method :original_render, :render
       alias_method :original_default_render, :default_render
+      alias_method :default_render, :custom_default_render
     end
 
-    def default_render(*args)
+    def custom_default_render(*args)
       action_name = params[:action]
       helper_module = "#{self.class.name.gsub('Controller', '')}Helper".constantize
 
@@ -25,6 +26,9 @@ module Hiccdown
       else
         original_default_render(*args)
       end
+    rescue => e
+      Rails.logger.error "Hiccdown CustomViewRendering error: #{e.message}"
+      original_default_render(*args)
     end
   end
 end
