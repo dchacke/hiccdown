@@ -107,7 +107,7 @@ Hiccdown then calls the `index` and `show` methods on the `ProductsHelper` and g
 ```ruby
 module ProductsHelper
   def index
-    [:ul, @products.map { |product| [:li, product.description] }]
+    [:ul, @products.map { |p| [:li, p.title] }]
     # => Renders '<ul><li>…</li>…</ul>'
   end
 
@@ -159,7 +159,7 @@ module ProductsHelper
 
   # This would traditionally live in a _product.html.erb partial
   def product p
-    [:li, p.description]
+    [:li, p.title]
   end
 end
 ```
