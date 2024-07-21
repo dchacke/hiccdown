@@ -170,6 +170,10 @@ end
 
 As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering. This fudge leads to situations where, for instance, you’re not sure if you should make a partial that calls helper methods or create a helper method that calls `content_tag`.
 
+## Gradual rollout
+
+You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would.
+
 ## HTML escape
 
 Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
