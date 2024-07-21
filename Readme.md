@@ -148,7 +148,7 @@ Since Hiccdown code lives inside helpers anyway, simply use additional helper me
 ```ruby
 module ProductsHelper
   def index
-    [:ul, @products.map { |p| (product(p) }] # calls `product` method below
+    [:ul, @products.map { |p| product(p) }] # calls `product` method below
   end
 
   def show
