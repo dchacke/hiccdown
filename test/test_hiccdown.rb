@@ -38,4 +38,16 @@ class HiccdownTest < Minitest::Test
   def test_no_escape
     assert_equal '<div class="foo"bar"><baz></div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'], false)
   end
+
+  def test_filters_out_nil
+    structure = [
+      :div,
+      'foo',
+      if false
+        'bar'
+      end
+    ]
+
+    assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
+  end
 end
