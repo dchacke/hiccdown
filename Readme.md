@@ -43,14 +43,29 @@ Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 
 ## Usage within Rails
 
-Delete your view file. In your controller action, do:
+You can either render HTML directly in your controller:
 
 ```ruby
 class FooController < ApplicationController
   def bar
-    render html: Hiccdown::to_html([:h1, 'hello world!']).html_safe
+    render html: Hiccdown::to_html([:h1, 'hello world!']).html_safe, layout: true
   end
 end
+```
+
+Or, more commonly, in your view:
+
+```ruby
+class FooController < ApplicationController
+  def bar
+    @text = 'Hello, world!'
+  end
+end
+```
+
+```erb
+<!-- bar.html.erb -->
+<%= Hiccdown::to_html([:h1, @text]).html_safe %>
 ```
 
 (Be careful with `html_safe`.)
