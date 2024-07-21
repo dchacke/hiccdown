@@ -70,6 +70,24 @@ end
 
 (Be careful with `html_safe`.)
 
+Hiccdown shines with datastructures. Concider a common use case, where you iterate over some collection to display a list:
+
+```ruby
+class FooController < ApplicationController
+  def bar
+    @items = ['one', 'two', 'three']
+  end
+end
+```
+
+```erb
+<!-- bar.html.erb -->
+<%= Hiccdown::to_html(
+  [:ul,
+    @items.map { |item| [:li, item] }]
+).html_safe %>
+```
+
 ## Why?
 
 If you're used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
