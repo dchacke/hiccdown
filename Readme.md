@@ -53,6 +53,8 @@ class FooController < ApplicationController
 end
 ```
 
+(Be careful with `html_safe`.)
+
 Or, more commonly, in a `.hdml` view:
 
 ```ruby
@@ -77,8 +79,6 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 <%= Hiccdown::to_html([:h1, @text]).html_safe %>
 ```
 
-(Be careful with `html_safe`.)
-
 Hiccdown shines with datastructures. Concider a common use case, where you iterate over some collection to display a list:
 
 ```ruby
@@ -93,6 +93,34 @@ end
 # bar.hdml
 [:ul,
   @items.map { |item| [:li, item] }]
+```
+
+## Usage with Rails helper methods
+
+Hiccdown plays well with native Rails helper methods. In fact, it eliminates the need for view partials. (That both partial *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering, see “Why?” below.)
+
+```ruby
+module ApplicationHelper
+  def list(items)
+    [:ul,
+      items.map { |i| list_item(i) }]
+  end
+
+  def list_item(i)
+    [:li, i]
+  end
+end
+```
+
+```ruby
+# hello.hdml
+list(@items)
+```
+
+Helper methods can naturally be combined:
+
+```ruby
+[foo(@bar), baz(@bar), [:div, bar(@foo)]]
 ```
 
 ## Why?
