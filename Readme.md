@@ -41,9 +41,45 @@ Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 # => '<ul><li>first</li><li>second</li></ul>'
 ```
 
-## Usage within Rails
+## Usage in Rails
 
-You can either render HTML directly in your controller:
+### View replacement
+
+**Hiccdown replaces view files.** It modifies implicit calls to `render` to point to helper methods instead.
+
+For instance, picture a `ProductsController` with an `index` and a `show` method:
+
+```ruby
+class ProductsController < ApplicationController
+  def index
+    @products = Product.all
+  end
+
+  def show
+    @product = Product.find(params[:id])
+  end
+end
+```
+
+Hiccdown then calls the `index` and `show` methods on the `ProductsHelper`:
+
+```ruby
+module ProductsHelper
+  def index
+    [:ul, @products.map { |product| [:li, product.description] }]
+  end
+
+  def show
+    [:div
+      [:h1, @product.title]
+      [:span, @product.description]]
+  end
+end
+```
+
+Should you call `render` explicitly, however, Hiccdown will not call the corresponding helper method.
+
+You can also call Hiccdown directly in your controller:
 
 ```ruby
 class FooController < ApplicationController
@@ -55,23 +91,6 @@ end
 
 (Be careful with `html_safe`.)
 
-Or, more commonly, in a `.hdml` view:
-
-```ruby
-class FooController < ApplicationController
-  def bar
-    @text = 'Hello, world!'
-  end
-end
-```
-
-```ruby
-# bar.hdml
-[:h1, @text]
-```
-
-`.hdml` views must return a single array. You can use Ruby comments inside them.
-
 Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
 ```erb
@@ -79,50 +98,30 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 <%= Hiccdown::to_html([:h1, @text]).html_safe %>
 ```
 
-Hiccdown shines with datastructures. Concider a common use case, where you iterate over some collection to display a list:
+### Usage with additional helper methods
+
+Since Hiccdown code lives inside helpers anyway, simply use additional helper methods inside your Hiccdown code:
 
 ```ruby
-class FooController < ApplicationController
-  def bar
-    @items = ['one', 'two', 'three']
+module ProductsHelper
+  def index
+    [:ul, @products.map { |p| (product(p) }] # calls product method below
+  end
+
+  def show
+    [:div
+      [:h1, @product.title]
+      [:span, @product.description]]
+  end
+
+  # This would traditionally live in a _product.html.erb partial
+  def product p
+    [:li, p.description]
   end
 end
 ```
 
-```ruby
-# bar.hdml
-[:ul,
-  @items.map { |item| [:li, item] }]
-```
-
-## Usage with Rails helper methods
-
-Hiccdown plays well with native Rails helper methods. In fact, it eliminates the need for view partials. (That both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering, see “Why?” below.)
-
-```ruby
-module ApplicationHelper
-  def list(items)
-    [:ul,
-      items.map { |i| list_item(i) }]
-  end
-
-  def list_item(i)
-    [:li, i]
-  end
-end
-```
-
-```ruby
-# bar.hdml
-list(@items)
-```
-
-Helper methods can naturally be combined:
-
-```ruby
-# bar.hdml
-[foo(@bar), baz(@bar), [:div, bar(@foo)]]
-```
+As you can see above, Hiccdown eliminates the need for view *partials*, as well.
 
 ## Why?
 
@@ -138,9 +137,11 @@ Consider this template:
 </ul>
 ```
 
-This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague would call it. This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
+This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague of mine calls it. This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
 
-Hiccdown makes this happen by taking a datastructure representing your template – which you're free to build up logically in any way you like, using the full power of the Ruby programming language (`map`, `filter`, `reduce` etc) – and then turning that into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
+That both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering.
+
+Hiccdown takes a datastructure representing your template – which you're free to build up logically in any way you like, using the full power of the Ruby programming language (`map`, `filter`, `reduce` etc) – and then turns that into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
 
 ## HTML escape
 

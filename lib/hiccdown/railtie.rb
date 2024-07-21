@@ -1,16 +1,30 @@
 module Hiccdown
   class Railtie < Rails::Railtie
-    initializer 'hiccdown.configure_template_handler' do
-      ActionView::Template.register_template_handler :hdml, Hiccdown::HdmlHandler
-      ActionView::Base.default_formats << :hdml
+    initializer 'hiccdown.action_controller' do
+      ActiveSupport.on_load(:action_controller) do
+        include CustomViewRendering
+      end
     end
   end
 
-  class HdmlHandler
-    def self.call(template, source)
-      <<-RUBY
-        Hiccdown::to_html(#{source}).html_safe
-      RUBY
+  module CustomViewRendering
+    extend ActiveSupport::Concern
+
+    included do
+      alias_method :original_render, :render
+      alias_method :original_default_render, :default_render
+    end
+
+    def default_render(*args)
+      action_name = params[:action]
+      helper_module = "#{self.class.name.gsub('Controller', '')}Helper".constantize
+
+      if helper_module.instance_methods(false).include?(action_name.to_sym)
+        content = helper_module.instance_method(action_name).bind(view_context).call
+        original_render html: Hiccdown::to_html(content).html_safe
+      else
+        original_default_render(*args)
+      end
     end
   end
 end
