@@ -106,7 +106,7 @@ class ProductsController < ApplicationController
 end
 ```
 
-Hiccdown then calls the `index` and `show` methods on the `ProductsHelper` and generates the corresponding HTML:
+Hiccdown then calls the `index` and `show` methods on the `ProductsHelper` and renders the corresponding HTML:
 
 ```ruby
 module ProductsHelper
