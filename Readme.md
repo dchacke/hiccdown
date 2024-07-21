@@ -4,7 +4,7 @@ Hiccdown is a simple Ruby gem that parses arrays and turns them into HTML string
 
 In Rails, it solves a major problem nobody talks about.
 
-The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same (?) functionality in Ruby.
+The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same basic functionality in Ruby.
 
 ## The problem
 
@@ -56,6 +56,10 @@ gem 'hiccdown'
 Then `$ bundle`.
 
 ## Usage in Ruby
+
+The original Hiccup explanation applies:
+
+> The first element of the [array] is used as the element name. The second attribute can optionally be a map, in which case it is used to supply the element's attributes. Every other element is considered part of the tag's body.
 
 ```ruby
 # plain
