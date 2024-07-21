@@ -4,6 +4,16 @@ Hiccdown is a very simple gem that parses Ruby arrays and turns them into HTML s
 
 The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same (?) functionality in Ruby.
 
+## Installation
+
+In your Gemfile:
+
+```ruby
+gem 'hiccdown'
+```
+
+Then `$ bundle`.
+
 ## Usage
 
 ```ruby
