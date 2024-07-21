@@ -25,7 +25,8 @@ Hiccdown::to_html [:ul, [[:li, 'first'], [:li, 'second']]]
 #
 # This is equivalent to writing:
 Hiccdown::to_html [:ul, [:li, 'first'], [:li, 'second']]
-# So why use it? So you can use methods that return arrays inside your hiccdown structure without having to use the splat operator every time:
+# So why use it? So you can use methods that return arrays inside your hiccdown
+# structure without having to use the splat operator every time:
 Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 # => '<ul><li>first</li><li>second</li></ul>'
 ```
