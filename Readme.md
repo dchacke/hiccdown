@@ -113,6 +113,10 @@ This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails
 
 Hiccdown makes this happen by taking a datastructure representing your template – which you're free to build up logically in any way you like, using the full power of the Ruby programming language (`map`, `filter`, `reduce` etc) – and then turning that into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
 
+## HTML escape
+
+Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter: `Hiccdown::to_html([:h1, '<script>alert("pawned");</script>'], false)`
+
 ## License
 
 MIT

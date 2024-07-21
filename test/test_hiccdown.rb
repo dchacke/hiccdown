@@ -30,4 +30,12 @@ class HiccdownTest < Minitest::Test
   def test_array_of_children
     assert_equal '<div><img/></div>', Hiccdown::to_html([:div, [[:img]]])
   end
+
+  def test_escape
+    assert_equal '<div class="foo&quot;bar">&lt;baz&gt;</div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'])
+  end
+
+  def test_no_escape
+    assert_equal '<div class="foo"bar"><baz></div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'], false)
+  end
 end
