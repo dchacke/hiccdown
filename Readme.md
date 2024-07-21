@@ -53,7 +53,7 @@ class FooController < ApplicationController
 end
 ```
 
-Or, more commonly, in your view:
+Or, more commonly, in a `.hdml` view:
 
 ```ruby
 class FooController < ApplicationController
@@ -62,6 +62,15 @@ class FooController < ApplicationController
   end
 end
 ```
+
+```ruby
+# bar.hdml
+[:h1, @text]
+```
+
+`.hdml` views must return a single array. You can use Ruby comments inside them.
+
+Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
 ```erb
 <!-- bar.html.erb -->
@@ -80,12 +89,10 @@ class FooController < ApplicationController
 end
 ```
 
-```erb
-<!-- bar.html.erb -->
-<%= Hiccdown::to_html(
-  [:ul,
-    @items.map { |item| [:li, item] }]
-).html_safe %>
+```ruby
+# bar.hdml
+[:ul,
+  @items.map { |item| [:li, item] }]
 ```
 
 ## Why?

@@ -30,3 +30,7 @@ module Hiccdown
     end
   end
 end
+
+if defined?(Rails)
+  require 'hiccdown/railtie'
+end
