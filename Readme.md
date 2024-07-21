@@ -59,7 +59,7 @@ Then `$ bundle`.
 
 The original Hiccup [explanation](https://github.com/weavejester/hiccup?tab=readme-ov-file#syntax) applies:
 
-> The first element of the [array] is used as the element name. The second [element] can optionally be a map, in which case it is used to supply the element's attributes. Every other element is considered part of the tag's body.
+> The first [item] of the [array] is used as the element name. The second [item] can optionally be a map, in which case it is used to supply the element's attributes. Every other [item] is considered part of the [element]'s body.
 
 ```ruby
 # plain
