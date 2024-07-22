@@ -126,8 +126,6 @@ module ProductsHelper
 end
 ```
 
-Should you call `render` explicitly, however, Hiccdown will not call the corresponding helper method. You remain in control.
-
 You can also call Hiccdown directly in your controller:
 
 ```ruby
