@@ -204,20 +204,17 @@ module ProductsHelper
 end
 ```
 
-`content_tag`, `link_to`, `button_to`, and any other helper methods that use `content_tag` support Hiccdown blocks.
 
-Support for form helpers is pending. In the meantime, wrap your form blocks in `content_tag`s:
+`content_tag`, `link_to`, `button_to`, and any other helper methods that use `content_tag` support Hiccdown blocks. `form_for` and `form_with` support them as well:
 
 ```ruby
 module ProductsHelper
   def form p
     form_with(model: p) do |f|
-      content_tag(:div) do
-        [:div,
-          f.text_field(:title),
-          f.text_area(:description),
-          [:button, { type: :submit }, 'Submit']]
-      end
+      [:div,
+        f.text_field(:title),
+        f.text_area(:description),
+        [:button, { type: :submit }, 'Submit']]
     end
   end
 end
