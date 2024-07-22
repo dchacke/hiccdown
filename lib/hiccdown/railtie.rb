@@ -49,9 +49,6 @@ module Hiccdown
       else
         original_render({ action: action_name }.merge(options))
       end
-    rescue => e
-      Rails.logger.error "Hiccdown CustomViewRendering error: #{e.message}"
-      original_render({ action: action_name }.merge(options))
     end
   end
 end
