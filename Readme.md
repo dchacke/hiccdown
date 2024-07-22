@@ -179,7 +179,7 @@ module ProductsHelper
   def product p
     [:li,
       link_to(p.title, p)] # functionally equivalent to
-  end                      # [:a, { href: product_path(p) }, p.title]
+  end                      # [:a, { href: url_for(p) }, p.title]
 end
 ```
 
@@ -204,6 +204,12 @@ module ProductsHelper
 end
 ```
 
+However, rather than use blocks, you are encouraged to just nest Hiccdown whenever possible:
+
+```ruby
+[:a, {href: url_for(p)}
+  [:h2, p.title]]
+```
 
 `content_tag`, `link_to`, `button_to`, and any other helper methods that use `content_tag` support Hiccdown blocks. `form_for` and `form_with` support them as well:
 
