@@ -8,6 +8,10 @@ module Hiccdown
       base.prepend(MethodOverrides)
     end
 
+    def scope *args, &block
+      Hiccdown::scope(*args, &block)
+    end
+
     module MethodOverrides
       def self.prepended(base)
         # button_to and link_to use content_tag internally so need no explicit mention.
@@ -27,6 +31,10 @@ module Hiccdown
         end
       end
     end
+  end
+
+  def self.scope *args, &block
+    block.call(*args)
   end
 
   def self.standalone_tags

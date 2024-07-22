@@ -90,6 +90,14 @@ Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 
 ## Usage in Rails
 
+Include the following module in your `ApplicationHelper`:
+
+```ruby
+module ApplicationHelper
+  include Hiccdown::ViewHelpers
+end
+```
+
 ### View replacement
 
 **Hiccdown replaces view files.** It modifies intercepts `render` to point to helper methods instead.
@@ -183,15 +191,7 @@ module ProductsHelper
 end
 ```
 
-Additional setup is required to teach built-in helper methods how to interpret Hiccdown returned by blocks. First, include the following module in your `ApplicationHelper`:
-
-```ruby
-module ApplicationHelper
-  include Hiccdown::ViewHelpers
-end
-```
-
-Now, built-in helpers can process Hiccdown returned by blocks:
+Built-in helper methods can process Hiccdown returned by blocks:
 
 ```ruby
 module ProductsHelper
@@ -204,10 +204,10 @@ module ProductsHelper
 end
 ```
 
-However, rather than use blocks, you are encouraged to just nest Hiccdown whenever possible:
+However, rather than use built-in helpers that render HTML, you are encouraged to just use Hiccdown replacements whenever possible. In many cases, nesting Hiccdown structures lets you avoid blocks altogether:
 
 ```ruby
-[:a, {href: url_for(p)}
+[:a, { href: url_for(p) }, # instead of link_to
   [:h2, p.title]]
 ```
 
@@ -225,6 +225,45 @@ module ProductsHelper
   end
 end
 ```
+
+## Scoping
+
+Computations should generally precede the building of a Hiccdown structure itself. Remember, these are all just helper methods, so as long as your method returns Hiccdown, any valid Ruby code works:
+
+```ruby
+def product p
+  total_sold = product.sales.map(&:total).reduce(&:+)
+
+  [:li, p.title,
+    [:strong, 'Sold: ', total_sold]] # total_sold can also be a separate method altogether
+end
+```
+
+But sometimes, you want to perform computations *within* a Hiccdown structure. Hiccdown ships with a simple method called `scope`:
+
+```ruby
+def product p
+  [:li, p.title,
+    scope do
+      total_sold = product.sales.map(&:total).reduce(&:+)
+
+      [:strong, 'Sold: ', total_sold]
+    end]
+end
+```
+
+`scope` accepts arbitrary arguments for easy variable setup:
+
+```ruby
+scope(1, 2, 3) do |a, b, c|
+  # Instead of
+  # a = 1
+  # b = 2
+  # c = 3
+end
+```
+
+Outside of Rails, `scope` is available on the Hiccdown module: `Hiccdown::scope`
 
 ## Gradual rollout
 

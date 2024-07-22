@@ -65,6 +65,8 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
   end
 
+  # ---------------------------------------------------------------------------
+
   # Testing that Rails helper methods are properly intercepted
   # content_tag
   def test_content_tag_without_block
@@ -130,5 +132,38 @@ class HiccdownTest < Minitest::Test
     end
 
     assert_equal %{<form class="button_to" method="post" action="foo"><button type="submit"><span>bar</span></button></form>}, result
+  end
+
+  # ---------------------------------------------------------------------------
+
+  def test_scope_standalone
+    result = @helper.scope(1, 2, 3) do |a, b, c|
+      a + b + c
+    end
+
+    assert_equal(6, result)
+  end
+
+  def test_scope_within_hiccdown
+    structure = [
+      :div,
+      @helper.scope(1, 2) do |a, b|
+        c = a + b
+        d = c + 2
+
+        [:span, d]
+      end,
+      'foo'
+    ]
+
+    assert_equal(%{<div><span>5</span>foo</div>}, Hiccdown::to_html(structure))
+  end
+
+  def test_scope_on_module
+    result = Hiccdown::scope(1, 2, 3) do |a, b, c|
+      a + b + c
+    end
+
+    assert_equal(6, result)
   end
 end
