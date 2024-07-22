@@ -1,7 +1,31 @@
 require 'cgi'
 require 'active_support/core_ext/string/output_safety'
+require 'action_view'
 
 module Hiccdown
+  module ViewHelpers
+    def self.included(base)
+      base.prepend(MethodOverrides)
+    end
+
+    module MethodOverrides
+      def self.prepended(base)
+        [:content_tag, :link_to].each do |method_name|
+          define_method(method_name) do |*args, &block|
+            if block
+              super(*args) do |*brgs|
+                result = block.call(*brgs)
+                result.is_a?(Array) ? Hiccdown::to_html(result).html_safe : result
+              end
+            else
+              super(*args)
+            end
+          end
+        end
+      end
+    end
+  end
+
   def self.standalone_tags
     Set.new([:area, :base, :br, :col, :command, :embed, :hr, :img, :input, :keygen, :link, :menuitem, :meta, :param, :source, :track, :wbr])
   end

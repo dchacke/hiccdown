@@ -3,6 +3,15 @@ require 'hiccdown'
 require 'active_support/core_ext/string/output_safety'
 
 class HiccdownTest < Minitest::Test
+  class TestHelper
+    include ActionView::Helpers
+    include Hiccdown::ViewHelpers
+  end
+
+  def setup
+    @helper = TestHelper.new
+  end
+
   def test_convert_tag_with_attrs_but_no_content
     assert_equal '<p class="foo"></p>', Hiccdown::to_html([:p, {class: 'foo'}])
   end
@@ -54,5 +63,27 @@ class HiccdownTest < Minitest::Test
     ]
 
     assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
+  end
+
+  # Testing that Rails helper methods are intercepted
+  def test_content_tag_without_block
+    result = @helper.content_tag(:span, 'foo')
+    assert_equal %{<span>foo</span>}, result
+  end
+
+  def test_content_tag_with_regular_block
+    result = @helper.content_tag(:span) do
+      "foo"
+    end
+
+    assert_equal %{<span>foo</span>}, result
+  end
+
+  def test_content_tag_with_hiccdown_block
+    result = @helper.content_tag(:div) do
+      [:span, "Home"]
+    end
+
+    assert_equal %{<div><span>Home</span></div>}, result
   end
 end

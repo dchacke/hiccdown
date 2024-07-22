@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.3.0'
 
 gem 'activesupport'
+gem 'actionview'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

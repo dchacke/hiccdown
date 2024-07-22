@@ -147,7 +147,7 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
 ### Usage with additional helper methods
 
-Since Hiccdown code lives inside helpers anyway, simply use additional helper methods inside your Hiccdown code:
+Since Hiccdown code lives inside helpers anyway, simply use additional helper methods in your Hiccdown code:
 
 ```ruby
 module ProductsHelper
@@ -169,6 +169,42 @@ end
 ```
 
 As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering. This fudge leads to situations where, for instance, you’re not sure if you should make a partial that calls helper methods or create a helper method that calls `content_tag`.
+
+### Using existing Rails helpers
+
+You can continue using Rails’s built-in helper methods such as `link_to` and `form_with`.
+
+First, include the following modules in your `ApplicationHelper`:
+
+```ruby
+module ApplicationHelper
+  include ActionView::Helpers
+  include Hiccdown::ViewHelpers
+end
+```
+
+Next, use Rails helpers as you normally would:
+
+```ruby
+module ProductsHelper
+  def product p
+    [:li, link_to(p.title, p)]
+  end
+end
+```
+
+You can even mix and match:
+
+```ruby
+module ProductsHelper
+  def product p
+    [:li,
+      link_to(p) do
+        [:h2, p.title]
+      end]
+  end
+end
+```
 
 ## Gradual rollout
 
