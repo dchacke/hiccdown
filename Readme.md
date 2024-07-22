@@ -172,18 +172,7 @@ As you can see, Hiccdown eliminates the need for view *partials*, as well. Again
 
 ### Using existing Rails helpers
 
-You can continue using Rails’s built-in helper methods such as `link_to` and `form_with`.
-
-First, include the following modules in your `ApplicationHelper`:
-
-```ruby
-module ApplicationHelper
-  include ActionView::Helpers
-  include Hiccdown::ViewHelpers
-end
-```
-
-Next, use Rails helpers as you normally would:
+You can continue using Rails’s built-in helper methods such as `link_to`:
 
 ```ruby
 module ProductsHelper
@@ -193,7 +182,15 @@ module ProductsHelper
 end
 ```
 
-You can even mix and match:
+Additional setup is required to teach built-in helper methods how to interpret Hiccdown returned by blocks. First, include the following module in your `ApplicationHelper`:
+
+```ruby
+module ApplicationHelper
+  include Hiccdown::ViewHelpers
+end
+```
+
+Now, built-in helpers can process Hiccdown returned by blocks:
 
 ```ruby
 module ProductsHelper
@@ -202,6 +199,25 @@ module ProductsHelper
       link_to(p) do
         [:h2, p.title]
       end]
+  end
+end
+```
+
+`content_tag`, `link_to`, `button_to`, and any other helper methods that use `content_tag` support Hiccdown blocks.
+
+Support for form helpers is pending. In the meantime, wrap your form blocks in `content_tag`s:
+
+```ruby
+module ProductsHelper
+  def form p
+    form_with(model: p) do |f|
+      content_tag(:div) do
+        [:div,
+          f.text_field(:title),
+          f.text_area(:description),
+          [:button, { type: :submit }, 'Submit']]
+      end
+    end
   end
 end
 ```
