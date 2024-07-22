@@ -65,7 +65,8 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
   end
 
-  # Testing that Rails helper methods are intercepted
+  # Testing that Rails helper methods are properly intercepted
+  # content_tag
   def test_content_tag_without_block
     result = @helper.content_tag(:span, 'foo')
     assert_equal %{<span>foo</span>}, result
@@ -87,6 +88,7 @@ class HiccdownTest < Minitest::Test
     assert_equal %{<div><span>Home</span></div>}, result
   end
 
+  # link_to
   def test_link_to_without_block
     result = @helper.link_to('foo', 'bar')
     assert_equal %{<a href="bar">foo</a>}, result
