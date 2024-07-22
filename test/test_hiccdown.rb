@@ -86,4 +86,25 @@ class HiccdownTest < Minitest::Test
 
     assert_equal %{<div><span>Home</span></div>}, result
   end
+
+  def test_link_to_without_block
+    result = @helper.link_to('foo', 'bar')
+    assert_equal %{<a href="bar">foo</a>}, result
+  end
+
+  def test_link_to_with_regular_block
+    result = @helper.link_to('foo') do
+      'bar'
+    end
+
+    assert_equal %{<a href="foo">bar</a>}, result
+  end
+
+  def test_link_to_with_hiccdown_block
+    result = @helper.link_to('foo') do
+      [:span, 'bar']
+    end
+
+    assert_equal %{<a href="foo"><span>bar</span></a>}, result
+  end
 end
