@@ -32,6 +32,8 @@ Compare the above `erb` syntax with this simple but functionally equivalent Hicc
 [:ul, [1, 2, 3].map { |i| [:li, i] }]
 ```
 
+## Benefits
+
 Here are some of the benefits of Hiccdown:
 
 1. Clean separation of logic and presentation – never write HTML again
@@ -168,7 +170,7 @@ module ProductsHelper
 end
 ```
 
-As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering. This fudge leads to situations where, for instance, you’re not sure if you should make a partial that calls helper methods or create a helper method that calls `content_tag`.
+As you can see, Hiccdown eliminates the need for view *partials*, as well. Again, that both partials *and* helper methods exist in Rails has always been a code smell – it’s a consequence of the wider problem that Rails does not properly separate logic and rendering. This fudge leads to situations where, for instance, you’re not sure if you should make a partial that calls helper methods or create a helper method that uses `content_tag`s.
 
 ### Using existing Rails helpers
 
@@ -177,8 +179,9 @@ You can continue using Rails’s built-in helper methods such as `link_to`:
 ```ruby
 module ProductsHelper
   def product p
-    [:li, link_to(p.title, p)]
-  end
+    [:li,
+      link_to(p.title, p)] # functionally equivalent to
+  end                      # [:a, { href: product_path(p) }, p.title]
 end
 ```
 
