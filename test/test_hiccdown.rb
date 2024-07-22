@@ -109,4 +109,26 @@ class HiccdownTest < Minitest::Test
 
     assert_equal %{<a href="foo"><span>bar</span></a>}, result
   end
+
+  # button_to
+  def test_button_to_without_block
+    result = @helper.button_to('foo', 'bar')
+    assert_equal %{<form class="button_to" method="post" action="bar"><input type="submit" value="foo" /></form>}, result
+  end
+
+  def test_button_to_with_regular_block
+    result = @helper.button_to('foo') do
+      'bar'
+    end
+
+    assert_equal %{<form class="button_to" method="post" action="foo"><button type="submit">bar</button></form>}, result
+  end
+
+  def test_button_to_with_hiccdown_block
+    result = @helper.button_to('foo') do
+      [:span, 'bar']
+    end
+
+    assert_equal %{<form class="button_to" method="post" action="foo"><button type="submit"><span>bar</span></button></form>}, result
+  end
 end

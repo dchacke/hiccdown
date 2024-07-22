@@ -10,6 +10,7 @@ module Hiccdown
 
     module MethodOverrides
       def self.prepended(base)
+        # button_to uses content_tag internally so needs no explicit mention.
         [:content_tag, :link_to].each do |method_name|
           define_method(method_name) do |*args, &block|
             if block
