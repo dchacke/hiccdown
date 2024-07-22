@@ -92,7 +92,7 @@ Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 
 ### View replacement
 
-**Hiccdown replaces view files.** It modifies implicit calls to `render` to point to helper methods instead.
+**Hiccdown replaces view files.** It modifies intercepts `render` to point to helper methods instead.
 
 For instance, picture a `ProductsController` with an `index` and a `show` action:
 
