@@ -41,7 +41,7 @@ module Hiccdown
     private
 
     def render_helper_method action_name, options = {}
-      helper_name = "#{self.class.name.gsub('Controller', '')}Helper"
+      helper_name = "#{controller_name.capitalize}Helper"
       helper_module = helper_name.constantize
 
       if helper_module.instance_methods(false).include?(action_name.to_sym)
