@@ -45,7 +45,7 @@ module Hiccdown
 
       if helper_module.instance_methods(false).include?(action_name.to_sym)
         content = helper_module.instance_method(action_name).bind(view_context).call
-        original_render({ html: Hiccdown::to_html(content).html_safe }.merge(options))
+        original_render({ html: Hiccdown::to_html(content).html_safe, layout: true }.merge(options))
       else
         original_render({ action: action_name }.merge(options))
       end
