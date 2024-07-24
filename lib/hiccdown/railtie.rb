@@ -3,6 +3,11 @@ module Hiccdown
     initializer 'hiccdown.action_controller' do
       ActiveSupport.on_load(:action_controller) do
         include CustomViewRendering
+
+        # Per https://stackoverflow.com/a/78783866/1371131
+        ActionController::Renderers.add :hiccdown do |src, options|
+          render({ html: Hiccdown.to_html(src).html_safe }.merge(options))
+        end
       end
     end
   end

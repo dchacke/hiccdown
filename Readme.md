@@ -134,17 +134,15 @@ module ProductsHelper
 end
 ```
 
-You can also call Hiccdown directly in your controller:
+You can also render Hiccdown directly in your controller:
 
 ```ruby
 class FooController < ApplicationController
   def bar
-    render html: Hiccdown::to_html([:h1, 'hello world!']).html_safe, layout: true
+    render hiccdown: [:h1, 'hello world!']
   end
 end
 ```
-
-(Be careful with `html_safe`.)
 
 Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
@@ -152,6 +150,8 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 <!-- bar.html.erb -->
 <%= Hiccdown::to_html([:h1, @text]).html_safe %>
 ```
+
+(Be careful with `html_safe`.)
 
 ### Usage with additional helper methods
 
