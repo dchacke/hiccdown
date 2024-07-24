@@ -66,6 +66,11 @@ module Hiccdown
 
     def render_helper_method action_name, options = {}
       helper_name = "#{controller_name.capitalize}Helper"
+
+      unless Object.const_defined?(helper_name)
+        return original_render({ action: action_name }.merge(options))
+      end
+
       helper_module = helper_name.constantize
 
       if helper_module.instance_methods(false).include?(action_name.to_sym)
@@ -76,8 +81,6 @@ module Hiccdown
       else
         original_render({ action: action_name }.merge(options))
       end
-    rescue NameError # no helper with that name
-      original_render({ action: action_name }.merge(options))
     end
   end
 end
