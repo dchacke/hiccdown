@@ -328,7 +328,7 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 # => Browser renders this as 'foo · bar'
 ```
 
-# Hiccup extensions
+## Hiccup extensions
 
 For convenience, Hiccdown extends Hiccup in two ways:
 
@@ -353,7 +353,7 @@ Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 # => '<div data-foo="bar baz"></div>'
 ```
 
-# Todos
+## Todos
 
 - Could the application layout live in ApplicationHelper#layout?
 - How to use this with turbo streams?
