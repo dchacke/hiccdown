@@ -52,6 +52,10 @@ module Hiccdown
       elsif options.key?(:action) || args.first.is_a?(Symbol) || (args.first.is_a?(String) && !args.first.include?('/'))
         action_name = options[:action] || args.first.to_s
         render_helper_method(action_name, options)
+      # When a template is given but doesn’t exist. Useful for gems like High Voltage
+      elsif options.key?(:template) && !view_context.lookup_context.template_exists?(options[:template])
+        action_name = options[:template].split('/').last
+        render_helper_method(action_name, options)
       # Partials, files and all other cases
       else
         original_render(*args, options)
