@@ -348,4 +348,4 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 
 ## License
 
-MIT
+MIT adjusted for non-public use.
