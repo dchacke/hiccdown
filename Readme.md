@@ -4,7 +4,7 @@ Hiccdown is a simple Ruby gem that parses arrays and turns them into HTML string
 
 In Rails, it solves a major problem nobody talks about.
 
-The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same basic functionality in Ruby.
+The name is a variation on the popular Clojure package [Hiccup](https://github.com/weavejester/hiccup). Hiccdown introduces the same basic functionality in Ruby (with some extensions, see below).
 
 ## The problem
 
@@ -324,6 +324,31 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 # => Browser renders this as 'foo · bar'
 ```
 
+# Hiccup extension
+
+For convenience, Hiccdown extends Hiccup in two ways:
+
+1. Deeply nested attribute hashes result in hyphenated attribute keys. This is useful for constructing data attributes. For example:
+
+    ```ruby
+    Hiccdown::to_html([:div, { data: { foo: { bar: 'baz' }, fuzz: 'buzz' } }])
+    # => '<div data-foo-bar="baz" data-fuzz="buzz"></div>'
+    ```
+
+2. Array attribute values are concatenated with a space (after each being cast to a string and escaped). This is useful for programmatically building class attributes:
+
+    ```ruby
+    Hiccdown::to_html([:div, { class: ['foo', :bar, 1] }])
+    # => '<div class="foo bar 1"></div>'
+    ```
+
+Of course, these two extensions can be mixed:
+
+```ruby
+Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
+# => '<div data-foo="bar baz"></div>'
+```
+
 ## Todos
 
 - Could the application layout live in ApplicationHelper#layout?
@@ -342,7 +367,6 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
     end
     ```
 
-- When an attribute is an array, `.join(' ')` it?
 - Make sure you can call methods from other helpers
 - Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource.
 

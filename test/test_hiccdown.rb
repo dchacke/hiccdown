@@ -58,6 +58,37 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
   end
 
+  def test_nested_attrs
+    structure = [
+      :div,
+      {
+        foo: :bar,
+        data: {
+          foo: { bar: :baz },
+          bar: 'bazz'
+        }
+      }
+    ]
+
+    assert_equal('<div foo="bar" data-foo-bar="baz" data-bar="bazz"></div>', Hiccdown::to_html(structure))
+  end
+
+  def test_array_attr_value_is_concatenated
+    structure = [
+      :div,
+      {
+        foo: ['foo', :bar, 'baz', 1],
+        bar: 'buz',
+        data: {
+          baz: ['buzz', :bar],
+          bazz: 'fooz'
+        }
+      }
+    ]
+
+    assert_equal('<div foo="foo bar baz 1" bar="buz" data-baz="buzz bar" data-bazz="fooz"></div>', Hiccdown::to_html(structure))
+  end
+
   # ---------------------------------------------------------------------------
 
   # Testing that Rails helper methods are properly intercepted

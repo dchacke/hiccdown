@@ -39,11 +39,29 @@ module Hiccdown
     Set.new([:area, :base, :br, :col, :command, :embed, :hr, :img, :input, :keygen, :link, :menuitem, :meta, :param, :source, :track, :wbr])
   end
 
+  def self.process_hash(hash, prefix = nil, escape)
+    hash.flat_map do |key, value|
+      attribute_key = prefix ? "#{prefix}-#{key}" : key.to_s
+
+      if value.is_a?(Hash)
+        process_hash(value, attribute_key, escape)
+      elsif value.is_a?(Array)
+        value_str = value.map { |v| maybe_escape(v.to_s, escape) }.join(' ')
+        ["#{attribute_key}=\"#{value_str}\""]
+      else
+        value_str = maybe_escape(value.to_s, escape)
+        ["#{attribute_key}=\"#{value_str}\""]
+      end
+    end
+  end
+
+  def self.hash_to_html_attributes(hash, escape)
+    process_hash(hash, nil, escape).join(' ')
+  end
+
   def self.to_html structure, escape = true
     if structure.is_a? Hash
-      structure.reduce([]) do |acc, (key, val)|
-        acc + [[key.to_s, '="', self.maybe_escape(val.to_s, escape), '"'].join]
-      end.join(' ')
+      self.hash_to_html_attributes(structure, escape)
     elsif structure.is_a? Array
       if structure.first.is_a?(Array)
         return structure.map { |s| to_html(s, escape) }.join
