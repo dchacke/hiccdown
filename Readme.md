@@ -22,7 +22,7 @@ Consider this template:
 
 This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague of mine calls it.
 
-The fundamental mistake is that of forcing the language in charge of assembling and rendering the template – in this case, Ruby – *into the template itself*.
+The fundamental mistake is that of forcing the language in charge of assembling and rendering the template – in this case, Ruby – *into the template itself*. Ruby should be in control; instead, it’s demoted to living inside its own creation, resurfacing only through strange interpolative outgrowths.
 
 This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
 
@@ -320,6 +320,8 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
   'foo',
   ' &middot '.html_safe,
   'bar']
+
+# => Browser renders this as 'foo · bar'
 ```
 
 ## Todos
