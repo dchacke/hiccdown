@@ -8,7 +8,7 @@ The name is a variation on the popular Clojure package [Hiccup](https://github.c
 
 ## The problem
 
-If you're used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
+If you’re used to writing embedded Ruby (those pesky `.erb` files), you may not realize how bad it is.
 
 Consider this template:
 
@@ -20,13 +20,13 @@ Consider this template:
 </ul>
 ```
 
-This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It's "programming in strings", as a former colleague of mine calls it.
+This is *gross*. Embedded Ruby makes you mix your template and your logic. Rails is big on *separation of concerns*, and the above example is the opposite of that. It’s “programming in strings”, as a former colleague of mine calls it.
 
 The fundamental mistake is that of forcing the language in charge of assembling and rendering the template – in this case, Ruby – *into the template itself*. Ruby should be in control; ‘above’ the template, as it were. Instead, it’s demoted to living inside its own creation, resurfacing only through strange interpolative outgrowths.
 
 This problem is well known in the Clojure world. Logic should be taken care of *before* rendering, not *during*.
 
-Hiccdown takes a datastructure representing your template – which you're free to build up programmatically in any way you like, using the full power of Ruby (`map`, `filter`, `reduce` etc) – and then turns that datastructure into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
+Hiccdown takes a datastructure representing your template – which you’re free to build up programmatically in any way you like, using the full power of Ruby (`map`, `filter`, `reduce` etc) – and then turns that datastructure into HTML *at the end*. All of this still happens on the server, so you still get all the benefits of pre-processing.
 
 Compare the above `erb` syntax with this simple but functionally equivalent Hiccdown syntax:
 
@@ -69,6 +69,10 @@ The original Hiccup [explanation](https://github.com/weavejester/hiccup?tab=read
 # plain
 Hiccdown::to_html [:h1, 'hello world']
 # => '<h1>hello world</h1>'
+
+# nested elements
+Hiccdown::to_html [:div, [:h1, 'hello world']]
+# => '<div><h1>hello world</h1></div>'
 
 # nested siblings
 Hiccdown::to_html [:div, [:h1, 'hello world'], [:h2, 'hello again']]
@@ -324,7 +328,7 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 # => Browser renders this as 'foo · bar'
 ```
 
-# Hiccup extension
+# Hiccup extensions
 
 For convenience, Hiccdown extends Hiccup in two ways:
 
@@ -349,11 +353,11 @@ Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 # => '<div data-foo="bar baz"></div>'
 ```
 
-## Todos
+# Todos
 
 - Could the application layout live in ApplicationHelper#layout?
 - How to use this with turbo streams?
-- Is there a way to teach user-built helpers how to process Hiccdown?
+- Is there a way to teach user-built helpers how to process Hiccdown? Or maybe intercepting `capture` already took care of this?
 - Building new components:
 
     As you can see above, making a component is as easy as writing a helper method.
@@ -370,6 +374,6 @@ Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 - Make sure you can call methods from other helpers
 - Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource.
 
-## License
+# License
 
 MIT adjusted for non-public use.
