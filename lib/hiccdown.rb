@@ -14,19 +14,17 @@ module Hiccdown
 
     module MethodOverrides
       def self.prepended(base)
-        # button_to and link_to use content_tag internally so need no explicit mention.
-        # TODO: form_for and form_with use `tag` (https://apidock.com/rails/ActionView/Helpers/TagHelper/tag)
-        # Any way to override that instead?
-        [:content_tag, :form_for, :form_with].each do |method_name|
-          define_method(method_name) do |*args, **kwargs, &block|
-            if block
-              super(*args, **kwargs) do |*brgs, **jwargs|
-                result = block.call(*brgs, *jwargs)
-                result.is_a?(Array) ? Hiccdown::to_html(result).html_safe : result
-              end
-            else
-              super(*args, **kwargs)
+        # `capture` is at the root of seemingly all Rails methods tasked with
+        # rendering content, including `content_tag` and `tag`, which in turn
+        # are used for `link_to`, `form_for`, etc.
+        define_method(:capture) do |*args, **kwargs, &block|
+          if block
+            super(*args, **kwargs) do |*brgs, **jwargs|
+              result = block.call(*brgs, *jwargs)
+              result.is_a?(Array) ? Hiccdown::to_html(result).html_safe : result
             end
+          else
+            super(*args, **kwargs)
           end
         end
       end

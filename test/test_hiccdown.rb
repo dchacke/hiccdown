@@ -1,13 +1,6 @@
-require 'minitest/autorun'
-require 'hiccdown'
-require 'active_support/core_ext/string/output_safety'
+require_relative 'test_helper'
 
 class HiccdownTest < Minitest::Test
-  class TestHelper
-    include ActionView::Helpers
-    include Hiccdown::ViewHelpers
-  end
-
   def setup
     @helper = TestHelper.new
   end
@@ -132,6 +125,98 @@ class HiccdownTest < Minitest::Test
     end
 
     assert_equal %{<form class="button_to" method="post" action="foo"><button type="submit"><span>bar</span></button></form>}, result
+  end
+
+  # form_for
+  def test_form_for_with_regular_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      'foo'
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+  end
+
+  def test_form_for_with_hiccdown_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      [:strong, 'foo']
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
+  end
+
+  # form_with
+  def test_form_with_with_regular_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_with(model: record) do |f|
+      'foo'
+    end
+
+    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+  end
+
+  def test_form_with_with_hiccdown_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_with(model: record) do |f|
+      [:strong, 'foo']
+    end
+
+    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
+  end
+
+  # label
+  def test_label_with_regular_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      f.label :foo do
+        'Bar'
+      end
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><label for="record_foo">Bar</label></form>}, result
+  end
+
+  def test_label_with_hiccdown_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      f.label :foo do
+        [:strong, 'Bar']
+      end
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><label for="record_foo"><strong>Bar</strong></label></form>}, result
+  end
+
+  # fields_for
+  def test_fields_for_with_regular_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      f.fields_for(:records) do |g|
+        'foo'
+      end
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+  end
+
+  def test_fields_for_with_hiccdown_block
+    record = Record.new(foo: 'custom value')
+
+    result = @helper.form_for(record) do |f|
+      f.fields_for(:records) do |g|
+        [:strong, 'foo']
+      end
+    end
+
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
   end
 
   # ---------------------------------------------------------------------------

@@ -211,7 +211,7 @@ However, rather than use built-in helpers that render HTML, you are encouraged t
   [:h2, p.title]]
 ```
 
-`content_tag`, `link_to`, `button_to`, and any other helper methods that use `content_tag` support Hiccdown blocks. `form_for` and `form_with` support them as well:
+`link_to`, `button_to`, `content_tag`, and all other built-in helper methods for rendering markup should support Hiccdown blocks. Form helpers support them as well:
 
 ```ruby
 module ProductsHelper
