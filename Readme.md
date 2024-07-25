@@ -116,7 +116,7 @@ class ProductsController < ApplicationController
 end
 ```
 
-Hiccdown then calls the `index` and `show` methods on the `ProductsHelper` and renders the corresponding HTML in the browser, inside the application layout, just as you would expect for an `erb` template:
+Hiccdown then calls the `index` and `show` methods on the `ProductsHelper`, turns the return value into HTML, and renders it in the browser, inside the application layout, just as you would expect for an `erb` template:
 
 ```ruby
 module ProductsHelper
@@ -226,7 +226,7 @@ module ProductsHelper
 end
 ```
 
-## Scoping
+### Scoping
 
 Computations should generally precede the building of a Hiccdown structure itself. Remember, these are all just helper methods, so as long as your method returns Hiccdown, any valid Ruby code works:
 
@@ -265,7 +265,7 @@ end
 
 Outside of Rails, `scope` is available on the Hiccdown module: `Hiccdown::scope`
 
-## Gradual rollout
+### Gradual rollout
 
 You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would. Once you’ve migrated a template, simply delete it.
 
