@@ -373,7 +373,3 @@ Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 
 - Make sure you can call methods from other helpers
 - Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource.
-
-# License
-
-MIT adjusted for non-public use.
