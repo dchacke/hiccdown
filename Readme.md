@@ -100,7 +100,7 @@ end
 
 ### View replacement
 
-**Hiccdown replaces view files.** It modifies intercepts `render` to point to helper methods instead.
+**Hiccdown replaces view files.** It intercepts `render` to point to helper methods instead.
 
 For instance, picture a `ProductsController` with an `index` and a `show` action:
 
@@ -267,17 +267,80 @@ Outside of Rails, `scope` is available on the Hiccdown module: `Hiccdown::scope`
 
 ## Gradual rollout
 
-You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would. Once you’ve migrated a template, simply delete it to render the helper method instead.
+You don’t need to replace your views all at once. When there’s no helper method corresponding to a controller action, Rails will render the `erb` template as it normally would. Once you’ve migrated a template, simply delete it.
+
+In addition, you can still call `render` in your helpers. So, when a view renders a partial, you can continue to `render` it in your helper until you’ve migrated the partial itself. For example:
+
+```ruby
+# ProductsHelper
+def index
+  [:div,
+    [:h1, 'Products'],
+    render(@products)]
+end
+```
+
+```html
+<!-- app/views/products/_product.html.erb -->
+<h1><%= product.title %></h1>
+```
+
+Then, migrate the `_product.html.erb` partial into a helper method called `product` in the same module and update the `index` method accordingly:
+
+```ruby
+def index
+  [:div,
+    [:h1, 'Products'],
+    # Invoke `product` instead of `render`
+    @products.map { |p| product(p) }]
+end
+
+# This replaces _product.html.erb
+def product p
+  [:h1, p.title]
+end
+```
+
+Lastly, delete `_product.html.erb`.
 
 ## HTML escape
 
-Hiccdown escapes HTML characters for you in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
+Hiccdown escapes HTML characters in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
 
 ```ruby
 Hiccdown::to_html([:h1, '<script>alert("pwned");</script>'], false)
 ```
 
-Hiccdown does not escape strings marked as `html_safe`.
+Hiccdown does not escape strings marked as `html_safe`. This can be useful when rendering HTML entities:
+
+```ruby
+[:p,
+  'foo',
+  ' &middot '.html_safe,
+  'bar']
+```
+
+## Todos
+
+- Could the application layout live in ApplicationHelper#layout?
+- How to use this with turbo streams?
+- Is there a way to teach user-built helpers how to process Hiccdown?
+- Building new components:
+
+    As you can see above, making a component is as easy as writing a helper method.
+
+    An additional benefit of using these methods is that nesting is more concise than with blocks and `yield`.
+
+    ```ruby
+    def foo bar, *children
+      # instead of block, just pass more args
+      # and then maybe Hiccdown should come with its own form component?
+    end
+    ```
+
+- When an attribute is an array, `.join(' ')` it?
+- Make sure you can call methods from other helpers
+- Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource.
 
 ## License
 
