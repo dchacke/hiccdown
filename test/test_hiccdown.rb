@@ -97,6 +97,10 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div foo="foo bar baz 1" bar="buz" data-baz="buzz bar" data-bazz="fooz"></div>', Hiccdown::to_html(structure))
   end
 
+  def test_array_attr_filters_empty_items
+    assert_equal('<div class="foo bar"></div>', Hiccdown::to_html([:div, class: ['foo', nil, '', 'bar']]))
+  end
+
   # ---------------------------------------------------------------------------
 
   # Testing that Rails helper methods are properly intercepted

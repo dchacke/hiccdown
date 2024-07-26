@@ -46,7 +46,11 @@ module Hiccdown
       if value.is_a?(Hash)
         process_attributes(value, attribute_key, escape)
       elsif value.is_a?(Array)
-        value_str = value.map { |v| maybe_escape(v.to_s, escape) }.join(' ')
+        value_str = value
+          .reject { |v| v.to_s == '' }
+          .map { |v| maybe_escape(v.to_s, escape) }
+          .join(' ')
+
         %{#{attribute_key}="#{value_str}"}
       else
         value_str = maybe_escape(value.to_s, escape)

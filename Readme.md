@@ -339,10 +339,10 @@ For convenience, Hiccdown extends Hiccup in two ways:
     # => '<div data-foo-bar="baz" data-fuzz="buzz"></div>'
     ```
 
-2. Array attribute values are concatenated with a space (after each being cast to a string and escaped). This is useful for programmatically building class attributes:
+2. Array attribute values are concatenated with a space (after each being cast to a string and escaped). `nil` and empty strings are ignored. This is useful for programmatically building class attributes:
 
     ```ruby
-    Hiccdown::to_html([:div, { class: ['foo', :bar, 1] }])
+    Hiccdown::to_html([:div, { class: ['foo', :bar, nil, '', 1] }])
     # => '<div class="foo bar 1"></div>'
     ```
 
