@@ -40,17 +40,17 @@ module Hiccdown
   end
 
   def self.process_hash(hash, prefix = nil, escape)
-    hash.flat_map do |key, value|
+    hash.map do |key, value|
       attribute_key = prefix ? "#{prefix}-#{key}" : key.to_s
 
       if value.is_a?(Hash)
         process_hash(value, attribute_key, escape)
       elsif value.is_a?(Array)
         value_str = value.map { |v| maybe_escape(v.to_s, escape) }.join(' ')
-        ["#{attribute_key}=\"#{value_str}\""]
+        "#{attribute_key}=\"#{value_str}\""
       else
         value_str = maybe_escape(value.to_s, escape)
-        ["#{attribute_key}=\"#{value_str}\""]
+        "#{attribute_key}=\"#{value_str}\""
       end
     end
   end
