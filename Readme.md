@@ -330,7 +330,7 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 
 ## Hiccup extensions
 
-For convenience, Hiccdown extends Hiccup in two ways:
+For convenience, Hiccdown extends Hiccup in three ways:
 
 1. Deeply nested attribute hashes result in hyphenated attribute keys. This is useful for constructing data attributes. For example:
 
@@ -346,11 +346,21 @@ For convenience, Hiccdown extends Hiccup in two ways:
     # => '<div class="foo bar 1"></div>'
     ```
 
-Of course, these two extensions can be mixed:
+Of course, these first two extensions can be mixed:
 
 ```ruby
 Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 # => '<div data-foo="bar baz"></div>'
+```
+
+3. To get top-level siblings, ie elements without a parent, wrap them in an array. The elements can be arrays and/or strings and will simply be concatenated:
+
+```ruby
+Hiccdown::to_html([[:div, 'foo'], [:div, 'bar']])
+# => '<div>foo</div><div>bar</div>'
+
+Hiccdown::to_html(['foo', [:div, 'bar']])
+# => 'foo<div>bar</div>'
 ```
 
 ## Todos

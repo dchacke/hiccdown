@@ -67,7 +67,7 @@ module Hiccdown
         return nil
       end
 
-      if structure.first.is_a?(Array)
+      if structure.first.is_a?(Array) || structure.first.is_a?(String)
         return structure.map { |s| to_html(s, escape) }.join
       end
 
