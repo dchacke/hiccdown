@@ -5,6 +5,10 @@ class HiccdownTest < Minitest::Test
     @helper = TestHelper.new
   end
 
+  def test_convert_empty_tag
+    assert_equal '<p></p>', Hiccdown::to_html([:p])
+  end
+
   def test_convert_tag_with_attrs_but_no_content
     assert_equal '<p class="foo"></p>', Hiccdown::to_html([:p, {class: 'foo'}])
   end
@@ -32,6 +36,10 @@ class HiccdownTest < Minitest::Test
 
   def test_array_of_children
     assert_equal '<div><img/></div>', Hiccdown::to_html([:div, [[:img]]])
+  end
+
+  def test_empty_array_of_children
+    assert_equal('<div></div>', Hiccdown::to_html([:div, []]))
   end
 
   def test_escape

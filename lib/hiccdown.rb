@@ -63,6 +63,10 @@ module Hiccdown
     if structure.is_a? Hash
       self.hash_to_html_attributes(structure, escape)
     elsif structure.is_a? Array
+      if structure.empty?
+        return nil
+      end
+
       if structure.first.is_a?(Array)
         return structure.map { |s| to_html(s, escape) }.join
       end
