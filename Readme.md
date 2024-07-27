@@ -314,19 +314,19 @@ Lastly, delete `_product.html.erb`.
 Where previously you might render a turbo stream like this:
 
 ```ruby
-turbo_stream.update(dom_id(@product), partial: 'products/product', locals: { product: @product })
+turbo_stream.update(@product, partial: 'products/product', locals: { product: @product })
 ```
 
 You now pass Hiccdown by invoking the helper method that replaces the partial:
 
 ```ruby
-turbo_stream.update(dom_id(@product), hiccdown: product(@product)
+turbo_stream.update(@product, hiccdown: product(@product)
 ```
 
 Or pass a Hiccdown structure directly:
 
 ```ruby
-turbo_stream.update(dom_id(@product), hiccdown: [:h1, @product.title])
+turbo_stream.update(@product, hiccdown: [:h1, @product.title])
 ```
 
 ## HTML escape
