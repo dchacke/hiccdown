@@ -5,14 +5,15 @@ require 'action_view'
 module Hiccdown
   module ViewHelpers
     def self.included(base)
-      base.prepend(MethodOverrides)
+      base.prepend(ViewHelperOverrides)
+      ActionView::Helpers::RenderingHelper.prepend(RenderingHelperOverrides)
     end
 
     def scope *args, &block
       Hiccdown::scope(*args, &block)
     end
 
-    module MethodOverrides
+    module ViewHelperOverrides
       def self.prepended(base)
         # `capture` is at the root of seemingly all Rails methods tasked with
         # rendering content, including `content_tag` and `tag`, which in turn
@@ -25,6 +26,23 @@ module Hiccdown
             end
           else
             super(*args, **kwargs)
+          end
+        end
+      end
+    end
+
+    module RenderingHelperOverrides
+      def self.prepended(base)
+        # This teaches the view renderer (which is different from the controller renderer,
+        # h/t https://stackoverflow.com/questions/78801079/rails-custom-renderer-for-turbo-stream?noredirect=1#comment138933498_78801079)
+        # to accept a `:hiccdown` option, thus enabling the rendering of hiccdown in turbo-stream
+        # actions as well:
+        # `turbo_stream.update(..., hiccdown: [:h1, 'hello world'])
+        define_method(:render) do |options = {}, locals = {}, &block|
+          if options.is_a?(Hash) && options.key?(:hiccdown)
+            Hiccdown::to_html(options[:hiccdown]).html_safe
+          else
+            super(options, locals, &block)
           end
         end
       end
