@@ -10,7 +10,7 @@ module Hiccdown
     end
 
     def scope *args, &block
-      Hiccdown::scope(*args, &block)
+      Hiccdown.scope(*args, &block)
     end
 
     module ViewHelperOverrides
@@ -22,7 +22,7 @@ module Hiccdown
           if block
             super(*args, **kwargs) do |*brgs, **jwargs|
               result = block.call(*brgs, *jwargs)
-              result.is_a?(Array) ? Hiccdown::to_html(result).html_safe : result
+              result.is_a?(Array) ? Hiccdown.to_html(result).html_safe : result
             end
           else
             super(*args, **kwargs)
@@ -40,7 +40,7 @@ module Hiccdown
         # `turbo_stream.update(..., hiccdown: [:h1, 'hello world'])
         define_method(:render) do |options = {}, locals = {}, &block|
           if options.is_a?(Hash) && options.key?(:hiccdown)
-            Hiccdown::to_html(options[:hiccdown]).html_safe
+            Hiccdown.to_html(options[:hiccdown]).html_safe
           else
             super(options, locals, &block)
           end
@@ -108,7 +108,7 @@ module Hiccdown
 
   def self.maybe_escape escapable, escape
     if escape && !escapable.html_safe?
-      CGI::escapeHTML(escapable)
+      CGI.escapeHTML(escapable)
     else
       escapable
     end

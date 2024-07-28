@@ -67,30 +67,30 @@ The original Hiccup [explanation](https://github.com/weavejester/hiccup?tab=read
 
 ```ruby
 # plain
-Hiccdown::to_html [:h1, 'hello world']
+Hiccdown.to_html [:h1, 'hello world']
 # => '<h1>hello world</h1>'
 
 # nested elements
-Hiccdown::to_html [:div, [:h1, 'hello world']]
+Hiccdown.to_html [:div, [:h1, 'hello world']]
 # => '<div><h1>hello world</h1></div>'
 
 # nested siblings
-Hiccdown::to_html [:div, [:h1, 'hello world'], [:h2, 'hello again']]
+Hiccdown.to_html [:div, [:h1, 'hello world'], [:h2, 'hello again']]
 # => '<div><h1>hello world</h1><h2>hello again</h2></div>'
 
 # attributes
-Hiccdown::to_html [:h1, {class: 'heading big'}, 'hello world']
+Hiccdown.to_html [:h1, {class: 'heading big'}, 'hello world']
 # => '<h1 class="heading big">hello world</h1>'
 
 # children as arrays
-Hiccdown::to_html [:ul, [[:li, 'first'], [:li, 'second']]]
+Hiccdown.to_html [:ul, [[:li, 'first'], [:li, 'second']]]
 # => '<ul><li>first</li><li>second</li></ul>'
 #
 # This is equivalent to writing:
-Hiccdown::to_html [:ul, [:li, 'first'], [:li, 'second']]
+Hiccdown.to_html [:ul, [:li, 'first'], [:li, 'second']]
 # So why use it? So you can use methods that return arrays inside your hiccdown
 # structure without having to use the splat operator every time:
-Hiccdown::to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
+Hiccdown.to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 # => '<ul><li>first</li><li>second</li></ul>'
 ```
 
@@ -154,7 +154,7 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
 ```erb
 <!-- bar.html.erb -->
-<%= Hiccdown::to_html([:h1, @text]).html_safe %>
+<%= Hiccdown.to_html([:h1, @text]).html_safe %>
 ```
 
 (Be careful with `html_safe`.)
@@ -269,7 +269,7 @@ scope(1, 2, 3) do |a, b, c|
 end
 ```
 
-Outside of Rails, `scope` is available on the Hiccdown module: `Hiccdown::scope`
+Outside of Rails, `scope` is available on the Hiccdown module: `Hiccdown.scope`
 
 ### Gradual rollout
 
@@ -346,7 +346,7 @@ ts(:update, dom_id(@product), product(@product))
 Hiccdown escapes HTML characters in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
 
 ```ruby
-Hiccdown::to_html([:h1, '<script>alert("pwned");</script>'], false)
+Hiccdown.to_html([:h1, '<script>alert("pwned");</script>'], false)
 ```
 
 Hiccdown does not escape strings marked as `html_safe`. This can be useful when rendering HTML entities:
@@ -367,31 +367,31 @@ For convenience, Hiccdown extends Hiccup in three ways:
 1. Deeply nested attribute hashes result in hyphenated attribute keys. This is useful for constructing data attributes. For example:
 
     ```ruby
-    Hiccdown::to_html([:div, { data: { foo: { bar: 'baz' }, fuzz: 'buzz' } }])
+    Hiccdown.to_html([:div, { data: { foo: { bar: 'baz' }, fuzz: 'buzz' } }])
     # => '<div data-foo-bar="baz" data-fuzz="buzz"></div>'
     ```
 
 2. Array attribute values are concatenated with a space (after each being cast to a string and escaped). `nil` and empty strings are ignored. This is useful for programmatically building class attributes:
 
     ```ruby
-    Hiccdown::to_html([:div, { class: ['foo', :bar, nil, '', 1] }])
+    Hiccdown.to_html([:div, { class: ['foo', :bar, nil, '', 1] }])
     # => '<div class="foo bar 1"></div>'
     ```
 
 Of course, these first two extensions can be mixed:
 
 ```ruby
-Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
+Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
 # => '<div data-foo="bar baz"></div>'
 ```
 
 3. To get top-level siblings, ie elements without a parent, wrap them in an array. The elements can be arrays and/or strings and will simply be concatenated:
 
     ```ruby
-    Hiccdown::to_html([[:div, 'foo'], [:div, 'bar']])
+    Hiccdown.to_html([[:div, 'foo'], [:div, 'bar']])
     # => '<div>foo</div><div>bar</div>'
 
-    Hiccdown::to_html(['foo', [:div, 'bar']])
+    Hiccdown.to_html(['foo', [:div, 'bar']])
     # => 'foo<div>bar</div>'
     ```
 

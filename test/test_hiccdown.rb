@@ -6,52 +6,52 @@ class HiccdownTest < Minitest::Test
   end
 
   def test_convert_empty_tag
-    assert_equal '<p></p>', Hiccdown::to_html([:p])
+    assert_equal '<p></p>', Hiccdown.to_html([:p])
   end
 
   def test_convert_tag_with_attrs_but_no_content
-    assert_equal '<p class="foo"></p>', Hiccdown::to_html([:p, {class: 'foo'}])
+    assert_equal '<p class="foo"></p>', Hiccdown.to_html([:p, {class: 'foo'}])
   end
 
   def test_convert_tag_with_content_but_no_attrs
-    assert_equal '<p>foo</p>', Hiccdown::to_html([:p, 'foo'])
+    assert_equal '<p>foo</p>', Hiccdown.to_html([:p, 'foo'])
   end
 
   def test_convert_tag_with_content_and_attrs
-    assert_equal '<p class="foo">bar</p>', Hiccdown::to_html([:p, {class: 'foo'}, 'bar'])
+    assert_equal '<p class="foo">bar</p>', Hiccdown.to_html([:p, {class: 'foo'}, 'bar'])
   end
 
   def test_convert_tag_with_children
     assert_equal(
       '<p class="foo"><span class="bar">baz</span><a href="#foo">link</a></p>',
-      Hiccdown::to_html(
+      Hiccdown.to_html(
         [:p, {class: 'foo'}, [:span, {class: 'bar'}, 'baz'], [:a, {href: '#foo'}, 'link']]
       )
     )
   end
 
   def test_standalone_tag_without_attrs
-    assert_equal '<img/>', Hiccdown::to_html([:img])
+    assert_equal '<img/>', Hiccdown.to_html([:img])
   end
 
   def test_array_of_children
-    assert_equal '<div><img/></div>', Hiccdown::to_html([:div, [[:img]]])
+    assert_equal '<div><img/></div>', Hiccdown.to_html([:div, [[:img]]])
   end
 
   def test_empty_array_of_children
-    assert_equal('<div></div>', Hiccdown::to_html([:div, []]))
+    assert_equal('<div></div>', Hiccdown.to_html([:div, []]))
   end
 
   def test_escape
-    assert_equal '<div class="foo&quot;bar">&lt;baz&gt;</div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'])
+    assert_equal '<div class="foo&quot;bar">&lt;baz&gt;</div>', Hiccdown.to_html([:div, {class: 'foo"bar'}, '<baz>'])
   end
 
   def test_no_escape
-    assert_equal '<div class="foo"bar"><baz></div>', Hiccdown::to_html([:div, {class: 'foo"bar'}, '<baz>'], false)
+    assert_equal '<div class="foo"bar"><baz></div>', Hiccdown.to_html([:div, {class: 'foo"bar'}, '<baz>'], false)
   end
 
   def test_no_escape_when_marked_html_safe
-    assert_equal('<div>&lt;this is escaped&gt;<span><but this isn’t></span></div>', Hiccdown::to_html([:div, '<this is escaped>', [:span, '<but this isn’t>'.html_safe]]))
+    assert_equal('<div>&lt;this is escaped&gt;<span><but this isn’t></span></div>', Hiccdown.to_html([:div, '<this is escaped>', [:span, '<but this isn’t>'.html_safe]]))
   end
 
   def test_filters_out_nil
@@ -63,7 +63,7 @@ class HiccdownTest < Minitest::Test
       end
     ]
 
-    assert_equal('<div>foo</div>', Hiccdown::to_html(structure))
+    assert_equal('<div>foo</div>', Hiccdown.to_html(structure))
   end
 
   def test_nested_attrs
@@ -78,7 +78,7 @@ class HiccdownTest < Minitest::Test
       }
     ]
 
-    assert_equal('<div foo="bar" data-foo-bar="baz" data-bar="bazz"></div>', Hiccdown::to_html(structure))
+    assert_equal('<div foo="bar" data-foo-bar="baz" data-bar="bazz"></div>', Hiccdown.to_html(structure))
   end
 
   def test_array_attr_value_is_concatenated
@@ -94,19 +94,19 @@ class HiccdownTest < Minitest::Test
       }
     ]
 
-    assert_equal('<div foo="foo bar baz 1" bar="buz" data-baz="buzz bar" data-bazz="fooz"></div>', Hiccdown::to_html(structure))
+    assert_equal('<div foo="foo bar baz 1" bar="buz" data-baz="buzz bar" data-bazz="fooz"></div>', Hiccdown.to_html(structure))
   end
 
   def test_array_attr_filters_empty_items
-    assert_equal('<div class="foo bar"></div>', Hiccdown::to_html([:div, class: ['foo', nil, '', 'bar']]))
+    assert_equal('<div class="foo bar"></div>', Hiccdown.to_html([:div, class: ['foo', nil, '', 'bar']]))
   end
 
   def test_top_level_array_with_array_elements
-    assert_equal('<div>foo</div><strong>bar</strong>', Hiccdown::to_html([[:div, 'foo'], [:strong, 'bar']]))
+    assert_equal('<div>foo</div><strong>bar</strong>', Hiccdown.to_html([[:div, 'foo'], [:strong, 'bar']]))
   end
 
   def test_top_level_array_with_mixed_elements
-    assert_equal('foo<strong>bar</strong>', Hiccdown::to_html(['foo', [:strong, 'bar']]))
+    assert_equal('foo<strong>bar</strong>', Hiccdown.to_html(['foo', [:strong, 'bar']]))
   end
 
   # ---------------------------------------------------------------------------
@@ -292,11 +292,11 @@ class HiccdownTest < Minitest::Test
       'foo'
     ]
 
-    assert_equal(%{<div><span>5</span>foo</div>}, Hiccdown::to_html(structure))
+    assert_equal(%{<div><span>5</span>foo</div>}, Hiccdown.to_html(structure))
   end
 
   def test_scope_on_module
-    result = Hiccdown::scope(1, 2, 3) do |a, b, c|
+    result = Hiccdown.scope(1, 2, 3) do |a, b, c|
       a + b + c
     end
 

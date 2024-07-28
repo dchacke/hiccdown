@@ -23,7 +23,7 @@ module Hiccdown
     def render_in(view_context)
       content = @helper_module.instance_method(@action_name).bind_call(view_context)
 
-      Hiccdown::to_html(content)
+      Hiccdown.to_html(content)
     end
 
     def format
