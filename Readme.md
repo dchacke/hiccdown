@@ -375,13 +375,13 @@ Hiccdown::to_html([:div, { data: { foo: ['bar', :baz] } }])
 
 3. To get top-level siblings, ie elements without a parent, wrap them in an array. The elements can be arrays and/or strings and will simply be concatenated:
 
-```ruby
-Hiccdown::to_html([[:div, 'foo'], [:div, 'bar']])
-# => '<div>foo</div><div>bar</div>'
+    ```ruby
+    Hiccdown::to_html([[:div, 'foo'], [:div, 'bar']])
+    # => '<div>foo</div><div>bar</div>'
 
-Hiccdown::to_html(['foo', [:div, 'bar']])
-# => 'foo<div>bar</div>'
-```
+    Hiccdown::to_html(['foo', [:div, 'bar']])
+    # => 'foo<div>bar</div>'
+    ```
 
 ## Todos
 
