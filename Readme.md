@@ -94,6 +94,27 @@ Hiccdown.to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 # => '<ul><li>first</li><li>second</li></ul>'
 ```
 
+### Components
+
+Methods that return Hiccdown are like components:
+
+```ruby
+def component
+  [:h1, 'hello world']
+end
+```
+
+Programmatically nest Hiccdown for rich components:
+
+```ruby
+def component text, *children
+  [:div, text, *children]
+end
+
+component('hello world', [:p, 'hello america'], [:p, 'hello europe'])
+# => [:div, 'hello world', [:p, 'hello america'], [:p, 'hello europe']]
+```
+
 ## Usage in Rails
 
 Include the following module in your `ApplicationHelper`:
@@ -122,7 +143,7 @@ class ProductsController < ApplicationController
 end
 ```
 
-Hiccdown then calls the `index` and `show` methods on the `ProductsHelper`, turns the return value into HTML, and renders it in the browser, inside the application layout, just as you would expect for an `erb` template:
+Hiccdown then calls the `index` and `show` methods on the `ProductsHelper`, turns the return value into HTML, and renders it in the browser, inside the application layout, just as you would expect for an `erb` template. Helper methods thus become Hiccdown components:
 
 ```ruby
 module ProductsHelper
@@ -400,18 +421,7 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
 - Could the application layout live in ApplicationHelper#layout?
 - How to use this with turbo streams?
 - Is there a way to teach user-built helpers how to process Hiccdown? Or maybe intercepting `capture` already took care of this?
-- Building new components:
-
-    As you can see above, making a component is as easy as writing a helper method.
-
-    An additional benefit of using these methods is that nesting is more concise than with blocks and `yield`.
-
-    ```ruby
-    def foo bar, *children
-      # instead of block, just pass more args
-      # and then maybe Hiccdown should come with its own form component?
-    end
-    ```
-
-- Make sure you can call methods from other helpers
-- Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource.
+- Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource. This? https://stackoverflow.com/a/74071278
+- Use frame layout for turbo frame requests? https://discuss.rubyonrails.org/t/the-right-way-to-override-render-method/84765/2
+- Some Reagent-like way to make things reactive using proc as first element? And then the server keeps track of which procs have been rendered, which items have changed, and re-renders that part of the template in a turbo stream?
+- Bug: When an empty block is passed to render, it results in an empty tag '<>'
