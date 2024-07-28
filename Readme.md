@@ -329,6 +329,18 @@ Or pass a Hiccdown structure directly:
 turbo_stream.update(@product, hiccdown: [:h1, @product.title])
 ```
 
+Since turbo streams are just glorified HTML templates, you can also just add the following method to your `ApplicationHelper`:
+
+```ruby
+def ts action, target, *children
+  [:'turbo-stream', {action: action, target: target},
+    [:template, *children]]
+end
+
+# Easy creation of a hiccdown turbo stream
+ts(:update, dom_id(@product), product(@product))
+```
+
 ## HTML escape
 
 Hiccdown escapes HTML characters in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
