@@ -105,15 +105,15 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div>foo</div><strong>bar</strong>', Hiccdown.to_html([[:div, 'foo'], [:strong, 'bar']]))
   end
 
-  def test_top_level_array_with_mixed_elements
+  def test_string_for_first_element
     assert_equal('foo<strong>bar</strong>', Hiccdown.to_html(['foo', [:strong, 'bar']]))
   end
 
-  def test_top_level_array_with_integer
+  def test_number_for_first_element
     assert_equal('0<strong>bar</strong>', Hiccdown.to_html([0, [:strong, 'bar']]))
   end
 
-  def test_top_level_array_with_float
+  def test_float_for_first_element
     assert_equal('0.5<strong>bar</strong>', Hiccdown.to_html([0.5, [:strong, 'bar']]))
   end
 
