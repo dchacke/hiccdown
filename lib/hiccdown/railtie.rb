@@ -80,7 +80,7 @@ module Hiccdown
       if helper_module.instance_methods(false).include?(action_name.to_sym)
         original_render(
           Hiccdown::Renderable.new(helper_module, action_name),
-          { layout: !request.format.turbo_stream? }.merge(options)
+          options
         )
       else
         original_render({ action: action_name }.merge(options))
