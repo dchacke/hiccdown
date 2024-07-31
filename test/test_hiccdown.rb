@@ -109,6 +109,14 @@ class HiccdownTest < Minitest::Test
     assert_equal('foo<strong>bar</strong>', Hiccdown.to_html(['foo', [:strong, 'bar']]))
   end
 
+  def test_top_level_array_with_integer
+    assert_equal('0<strong>bar</strong>', Hiccdown.to_html([0, [:strong, 'bar']]))
+  end
+
+  def test_top_level_array_with_float
+    assert_equal('0.5<strong>bar</strong>', Hiccdown.to_html([0.5, [:strong, 'bar']]))
+  end
+
   # ---------------------------------------------------------------------------
 
   # Testing that Rails helper methods are properly intercepted
