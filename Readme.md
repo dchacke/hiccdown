@@ -96,7 +96,7 @@ Hiccdown.to_html [:ul, ['first', 'second'].map { |i| [:li, i] }]
 
 ### Components
 
-Methods that return Hiccdown are like components:
+Methods that return Hiccdown act as components:
 
 ```ruby
 def component
