@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'hiccdown'
-  s.version     = '1.5.2'
+  s.version     = '1.5.3'
   s.summary     = 'Hiccup for Ruby'
   s.description = 'Generates an HTML string from a Hiccup structure and improves Rails views.'
   s.authors     = ['Dennis Hackethal']

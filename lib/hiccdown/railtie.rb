@@ -69,7 +69,7 @@ module Hiccdown
     private
 
     def render_helper_method action_name, options = {}
-      helper_name = "#{controller_name.capitalize}Helper"
+      helper_name = "#{controller_path.camelize}Helper"
 
       unless Object.const_defined?(helper_name)
         return original_render({ action: action_name }.merge(options))
