@@ -419,7 +419,6 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
 ## Todos
 
 - Could the application layout live in ApplicationHelper#layout?
-- How to use this with turbo streams?
 - Is there a way to teach user-built helpers how to process Hiccdown? Or maybe intercepting `capture` already took care of this?
 - Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource. This? https://stackoverflow.com/a/74071278
 - Use frame layout for turbo frame requests? https://discuss.rubyonrails.org/t/the-right-way-to-override-render-method/84765/2
