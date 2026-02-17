@@ -416,11 +416,10 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
     # => 'foo<div>bar</div>'
     ```
 
-## Todos
+## Contributing
 
-- Could the application layout live in ApplicationHelper#layout?
-- Is there a way to teach user-built helpers how to process Hiccdown? Or maybe intercepting `capture` already took care of this?
-- Bug: redirects result in two additional requests, the first of which is a turbo-stream request that renders nothing, thus (presumably) prompting the browser to make another request for the same resource. This? https://stackoverflow.com/a/74071278
-- Use frame layout for turbo frame requests? https://discuss.rubyonrails.org/t/the-right-way-to-override-render-method/84765/2
-- Some Reagent-like way to make things reactive using proc as first element? And then the server keeps track of which procs have been rendered, which items have changed, and re-renders that part of the template in a turbo stream?
-- Bug: When an empty block is passed to render, it results in an empty tag '<>'
+Report issues on the [Veritula issue tracker](https://veritula.com/discussions/hiccdown-development-notes). Do not submit issues on GitHub.
+
+## Bug bounty program
+
+There’s a [Veritula bug bounty program](https://veritula.com/bounties/9) for Hiccdown. Report bugs there, not on GitHub.
