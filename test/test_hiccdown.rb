@@ -166,6 +166,28 @@ class HiccdownTest < Minitest::Test
     assert_equal %{<div></div>}, result
   end
 
+  def test_content_tag_with_hiccdown_content
+    assert_equal %{<div class="card"><span>Home</span></div>}, @helper.content_tag(:div, [:span, 'Home'], class: 'card')
+  end
+
+  def test_content_tag_escapes_hiccdown_content
+    assert_equal %{<div><span>&lt;b&gt;</span></div>}, @helper.content_tag(:div, [:span, '<b>'])
+  end
+
+  def test_tag_builder_with_hiccdown_content
+    assert_equal %{<div><span>Home</span></div>}, @helper.tag.div([:span, 'Home'])
+  end
+
+  # A helper of the app's own that yields into a Rails helper, rather than
+  # passing the block on.
+  def test_helper_yielding_hiccdown_into_content_tag
+    def @helper.card
+      content_tag(:div, yield, class: 'card')
+    end
+
+    assert_equal %{<div class="card"><span>Home</span></div>}, @helper.card { [:span, 'Home'] }
+  end
+
   # link_to
   def test_link_to_without_block
     result = @helper.link_to('foo', 'bar')
@@ -194,6 +216,10 @@ class HiccdownTest < Minitest::Test
     end
 
     assert_equal %{<a href="foo"></a>}, result
+  end
+
+  def test_link_to_with_hiccdown_name
+    assert_equal %{<a href="bar"><span>foo</span></a>}, @helper.link_to([:span, 'foo'], 'bar')
   end
 
   # render

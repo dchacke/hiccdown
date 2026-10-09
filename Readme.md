@@ -275,6 +275,18 @@ module ProductsHelper
 end
 ```
 
+They take Hiccdown as content, too, so helpers of your own can yield into them:
+
+```ruby
+link_to([:span, p.title], p)
+
+def card
+  content_tag(:div, yield, class: 'card')
+end
+
+card { [:h2, p.title] }
+```
+
 ### Scoping
 
 Computations should generally precede the building of a Hiccdown structure itself. Remember, these are all just helper methods, so as long as your method returns Hiccdown, any valid Ruby code works:

@@ -7,6 +7,7 @@ module Hiccdown
     def self.included(base)
       base.prepend(ViewHelperOverrides)
       ActionView::Helpers::RenderingHelper.prepend(RenderingHelperOverrides)
+      ActionView::Helpers::TagHelper::TagBuilder.prepend(TagBuilderOverrides)
     end
 
     def scope *args, &block
@@ -44,6 +45,19 @@ module Hiccdown
           else
             super(options, locals, &block)
           end
+        end
+      end
+    end
+
+    module TagBuilderOverrides
+      def self.prepended(base)
+        # Content given as an argument rather than a block, as in
+        # `content_tag(:div, [:span, 'foo'])`, `tag.div(...)`,
+        # `link_to([:span, 'foo'], path)` or a helper that yields into one of
+        # them, skips `capture` and ends up here.
+        define_method(:content_tag_string) do |name, content, options, escape = true|
+          content = Hiccdown.to_html(content).html_safe if content.is_a?(Array)
+          super(name, content, options, escape)
         end
       end
     end
