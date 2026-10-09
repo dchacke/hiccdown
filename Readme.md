@@ -59,6 +59,8 @@ gem 'hiccdown'
 
 Then `$ bundle`.
 
+Hiccdown supports Rails 7.0 through 8.1.
+
 ## Usage in Ruby
 
 The original Hiccup [explanation](https://github.com/weavejester/hiccup?tab=readme-ov-file#syntax) applies:
@@ -441,6 +443,8 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
 ## Contributing
 
 Report issues on the [Veritula issue tracker](https://veritula.com/discussions/hiccdown-development-notes). Do not submit issues on GitHub.
+
+`$ rake test` runs the tests against the latest Rails, and `$ rake test:rails` against each supported version, with the Gemfiles in `gemfiles`.
 
 ## Bug bounty program
 

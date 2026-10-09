@@ -5,6 +5,12 @@ class HiccdownTest < Minitest::Test
     @helper = TestHelper.new
   end
 
+  # Forms start with this hidden input of Rails' own, whose attributes come in
+  # a different order from one version of Rails to another.
+  def utf8_input
+    @helper.utf8_enforcer_tag
+  end
+
   def test_convert_empty_tag
     assert_equal '<p></p>', Hiccdown.to_html([:p])
   end
@@ -229,7 +235,7 @@ class HiccdownTest < Minitest::Test
       'foo'
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}foo</form>}, result
   end
 
   def test_form_for_with_hiccdown_block
@@ -239,7 +245,7 @@ class HiccdownTest < Minitest::Test
       [:strong, 'foo']
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<strong>foo</strong></form>}, result
   end
 
   # form_with
@@ -250,7 +256,7 @@ class HiccdownTest < Minitest::Test
       'foo'
     end
 
-    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post">#{utf8_input}foo</form>}, result
   end
 
   def test_form_with_with_hiccdown_block
@@ -260,7 +266,7 @@ class HiccdownTest < Minitest::Test
       [:strong, 'foo']
     end
 
-    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
+    assert_equal %{<form action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<strong>foo</strong></form>}, result
   end
 
   # label
@@ -273,7 +279,7 @@ class HiccdownTest < Minitest::Test
       end
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><label for="record_foo">Bar</label></form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<label for="record_foo">Bar</label></form>}, result
   end
 
   def test_label_with_hiccdown_block
@@ -285,7 +291,7 @@ class HiccdownTest < Minitest::Test
       end
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><label for="record_foo"><strong>Bar</strong></label></form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<label for="record_foo"><strong>Bar</strong></label></form>}, result
   end
 
   # fields_for
@@ -298,7 +304,7 @@ class HiccdownTest < Minitest::Test
       end
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />foo</form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}foo</form>}, result
   end
 
   def test_fields_for_with_hiccdown_block
@@ -310,7 +316,7 @@ class HiccdownTest < Minitest::Test
       end
     end
 
-    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><strong>foo</strong></form>}, result
+    assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<strong>foo</strong></form>}, result
   end
 
   # ---------------------------------------------------------------------------

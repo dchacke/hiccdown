@@ -11,6 +11,8 @@ require_relative 'factories/record'
 
 class HiccdownTest < Minitest::Test
   class TestHelper
+    # A view's output buffer, which Rails 7.0's helpers need.
+    include ActionView::Context
     include ActionView::Helpers
     include Hiccdown::ViewHelpers
     include ActionDispatch::Routing::PolymorphicRoutes
@@ -27,7 +29,8 @@ class HiccdownTest < Minitest::Test
       {}
     end
 
-    def records_path
+    # Rails 7.0 passes options.
+    def records_path(*)
       '/records'
     end
   end

@@ -8,4 +8,8 @@ Gem::Specification.new do |s|
   s.files       = Dir['lib/**/*']
   s.homepage    = 'https://github.com/dchacke/hiccdown'
   s.license     = 'MIT'
+
+  # Tested against each of these with the Gemfiles in `gemfiles`.
+  s.add_dependency 'actionview', '>= 7.0', '< 9'
+  s.add_dependency 'activesupport', '>= 7.0', '< 9'
 end
