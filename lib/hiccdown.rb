@@ -22,7 +22,7 @@ module Hiccdown
         define_method(:capture) do |*args, **kwargs, &block|
           if block
             super(*args, **kwargs) do |*brgs, **jwargs|
-              result = block.call(*brgs, *jwargs)
+              result = block.call(*brgs, **jwargs)
               result.is_a?(Array) ? Hiccdown.to_html(result).html_safe : result
             end
           else

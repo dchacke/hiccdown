@@ -11,6 +11,12 @@ class HiccdownTest < Minitest::Test
     @helper.utf8_enforcer_tag
   end
 
+  def assert_captures_like_rails &block
+    rails = Class.new { include ActionView::Context, ActionView::Helpers }.new
+    expected = (rails.capture(text: 'foo', &block) rescue $!.class)
+    assert_equal expected, (@helper.capture(text: 'foo', &block) rescue $!.class)
+  end
+
   def test_convert_empty_tag
     assert_equal '<p></p>', Hiccdown.to_html([:p])
   end
@@ -343,6 +349,16 @@ class HiccdownTest < Minitest::Test
     end
 
     assert_equal %{<form class="new_record" id="new_record" action="/records" accept-charset="UTF-8" method="post">#{utf8_input}<strong>foo</strong></form>}, result
+  end
+
+  # capture hands its arguments to the block as Rails does, which passes
+  # keywords on as keywords from Rails 8.1 and as a hash before.
+  def test_capture_passes_keywords_to_block
+    assert_captures_like_rails { |text:| text }
+  end
+
+  def test_capture_passes_keywords_to_block_as_hash
+    assert_captures_like_rails { |options| options[:text] }
   end
 
   # ---------------------------------------------------------------------------
