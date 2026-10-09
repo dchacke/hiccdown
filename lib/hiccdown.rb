@@ -83,10 +83,8 @@ module Hiccdown
     if structure.is_a? Hash
       self.process_attributes(structure, nil, escape).join(' ')
     elsif structure.is_a? Array
-      if structure.empty?
-        return nil
-      end
-
+      # Empty arrays end up here too, as no siblings, so they render as an
+      # empty string rather than nil, which callers can mark `html_safe`.
       unless structure.first.is_a?(Symbol)
         return structure.map { |s| to_html(s, escape) }.join
       end

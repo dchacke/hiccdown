@@ -42,6 +42,10 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div></div>', Hiccdown.to_html([:div, []]))
   end
 
+  def test_empty_array
+    assert_equal('', Hiccdown.to_html([]))
+  end
+
   def test_escape
     assert_equal '<div class="foo&quot;bar">&lt;baz&gt;</div>', Hiccdown.to_html([:div, {class: 'foo"bar'}, '<baz>'])
   end
@@ -148,6 +152,14 @@ class HiccdownTest < Minitest::Test
     assert_equal %{<div><span>Home</span></div>}, result
   end
 
+  def test_content_tag_with_empty_hiccdown_block
+    result = @helper.content_tag(:div) do
+      []
+    end
+
+    assert_equal %{<div></div>}, result
+  end
+
   # link_to
   def test_link_to_without_block
     result = @helper.link_to('foo', 'bar')
@@ -168,6 +180,23 @@ class HiccdownTest < Minitest::Test
     end
 
     assert_equal %{<a href="foo"><span>bar</span></a>}, result
+  end
+
+  def test_link_to_with_empty_hiccdown_block
+    result = @helper.link_to('foo') do
+      []
+    end
+
+    assert_equal %{<a href="foo"></a>}, result
+  end
+
+  # render
+  def test_render_hiccdown
+    assert_equal %{<h1>foo</h1>}, @helper.render(hiccdown: [:h1, 'foo'])
+  end
+
+  def test_render_empty_hiccdown
+    assert_equal '', @helper.render(hiccdown: [])
   end
 
   # button_to
