@@ -157,7 +157,7 @@ module Hiccdown
     end
 
     def custom_default_render
-      render_helper_method(params[:action])
+      render_helper_method(action_name)
     end
 
     # Options that say what to render, besides those of renderers like `json:`

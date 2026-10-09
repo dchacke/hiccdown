@@ -34,6 +34,18 @@ module RenderingTest
       render plain: 'plain', status: :accepted
     end
   end
+
+  class ImplicitController < ActionController::Base
+    layout false
+
+    def show; end
+  end
+
+  module ImplicitHelper
+    def show
+      [:p, 'implicit']
+    end
+  end
 end
 
 class RenderingTest::Test < Minitest::Test
@@ -45,6 +57,10 @@ class RenderingTest::Test < Minitest::Test
 
   def test_render_with_layout_only
     assert_equal [200, '<nav><p>admin</p></nav>'], request(RenderingTest::ProductsController, :admin)
+  end
+
+  def test_implicit_render_without_router
+    assert_equal [200, '<p>implicit</p>'], request(RenderingTest::ImplicitController, :show, routed: false)
   end
 
   def test_render_with_content_option
