@@ -82,22 +82,45 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     base64 (0.3.0)
     bigdecimal (4.1.3)
     builder (3.3.0)
     byebug (13.0.0)
       reline (>= 0.6.0)
+    capybara (3.40.0)
+      addressable
+      matrix
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.11)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
     concurrent-ruby (1.3.4)
     connection_pool (2.5.5)
     crass (1.0.7)
+    cuprite (0.18)
+      capybara (~> 3.0)
+      ferrum (~> 0.18.0)
     date (3.6.0)
     drb (2.2.3)
     erb (6.0.7)
     erubi (1.13.1)
+    ferrum (0.18.0)
+      addressable (~> 2.5)
+      base64 (~> 0.2)
+      concurrent-ruby (~> 1.1)
+      websocket-driver (~> 0.7)
     globalid (1.4.0)
       activesupport (>= 6.1)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
+    importmap-rails (2.2.3)
+      actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      railties (>= 6.0.0)
     io-console (0.9.4)
     irb (1.18.0)
       pp (>= 0.6.0)
@@ -116,6 +139,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.2.1)
+    matrix (0.4.3)
     mini_mime (1.1.5)
     minitest (5.27.0)
     net-imap (0.6.7)
@@ -136,6 +160,13 @@ GEM
       prettyprint
     prettyprint (0.2.1)
     prism (1.9.0)
+    propshaft (1.3.2)
+      actionpack (>= 7.0.0)
+      activesupport (>= 7.0.0)
+      rack
+    public_suffix (7.0.5)
+    puma (8.0.2)
+      nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.7)
     rack-session (2.1.2)
@@ -185,6 +216,7 @@ GEM
       prism (>= 1.6.0)
       rbs (>= 4.0.0)
       tsort
+    regexp_parser (2.13.1)
     reline (0.7.0)
       io-console (~> 0.5)
     securerandom (0.4.1)
@@ -202,6 +234,8 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
     zeitwerk (2.8.3)
 
 PLATFORMS
@@ -211,7 +245,12 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
+  capybara
+  cuprite
   hiccdown!
+  importmap-rails
+  propshaft
+  puma
   rails (~> 8.1.0)
   turbo-rails
 

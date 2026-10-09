@@ -472,6 +472,8 @@ Report issues on the [Veritula issue tracker](https://veritula.com/discussions/h
 
 `$ rake test` runs the tests against the latest Rails, and `$ rake test:rails` against each supported version, with the Gemfiles in `gemfiles`.
 
+`test/dummy` is a small Rails app for trying Hiccdown out in a browser (`$ test/dummy/bin/rails server`). `$ rake test:system` runs the system tests, which drive it in headless Brave, or in another Chromium-based browser at `BROWSER_PATH`. They’re slower, so `rake test` leaves them out.
+
 ## Bug bounty program
 
 There’s a [Veritula bug bounty program](https://veritula.com/bounties/9) for Hiccdown. Report bugs there, not on GitHub.

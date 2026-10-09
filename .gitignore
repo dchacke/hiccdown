@@ -66,3 +66,7 @@ build-iPhoneSimulator/
 
 # Lockfiles of the Gemfiles that test against older versions of Rails
 gemfiles/*.lock
+
+# The dummy app's logs and caches
+test/dummy/log
+test/dummy/tmp
