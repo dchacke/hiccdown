@@ -474,11 +474,11 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
     # => 'foo<div>bar</div>'
     ```
 
-4. As in Rails, attributes that are `nil` or `false` are left out, so they can be set conditionally. In nested attributes, like data and aria ones, `false` means something, so it stays:
+4. As in Rails, attributes that are `nil` are left out, and so are boolean attributes, like `disabled` or `checked`, that are `false`, so they can be set conditionally. For other attributes, like `draggable` or data attributes, `false` is a value:
 
     ```ruby
-    Hiccdown.to_html([:button, { disabled: false, data: { open: false } }, 'Open'])
-    # => '<button data-open="false">Open</button>'
+    Hiccdown.to_html([:button, { disabled: false, draggable: false, data: { open: false } }, 'Open'])
+    # => '<button draggable="false" data-open="false">Open</button>'
     ```
 
 ## Contributing

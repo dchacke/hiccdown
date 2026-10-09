@@ -86,10 +86,10 @@ module Hiccdown
     hash.flat_map do |key, value|
       attribute_key = name_escape(prefix ? "#{prefix}-#{key}" : key)
 
-      # As in Rails, nil leaves an attribute out, and so does false, since
-      # `disabled="false"` would still disable. In nested attributes, like
-      # data and aria ones, false means something, so it stays.
-      if value.nil? || (value == false && !prefix)
+      # As in Rails, nil leaves an attribute out, and so does false a boolean
+      # attribute, like `disabled`, which would otherwise still disable. For
+      # others, like `draggable` or data attributes, false is a value.
+      if value.nil? || (value == false && !prefix && ActionView::Helpers::TagHelper::BOOLEAN_ATTRIBUTES.include?(key.to_s))
         []
       elsif value.is_a?(Hash)
         process_attributes(value, attribute_key, escape)

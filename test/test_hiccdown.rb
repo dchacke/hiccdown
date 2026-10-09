@@ -117,10 +117,15 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div class="foo bar"></div>', Hiccdown.to_html([:div, class: ['foo', nil, '', 'bar']]))
   end
 
-  # As in Rails: an attribute that's nil or false is left out, since
-  # `disabled="false"` would still disable.
-  def test_nil_and_false_attrs_are_left_out
-    assert_equal('<input type="text"/>', Hiccdown.to_html([:input, {type: 'text', disabled: false, value: nil}]))
+  # As in Rails: an attribute that's nil is left out, and so is a boolean
+  # attribute that's false, since `disabled="false"` would still disable.
+  def test_nil_and_false_boolean_attrs_are_left_out
+    assert_equal('<input type="text"/>', Hiccdown.to_html([:input, {type: 'text', disabled: false, 'checked' => false, value: nil}]))
+  end
+
+  # For other attributes, false is a value.
+  def test_false_non_boolean_attrs_are_kept
+    assert_equal('<a draggable="false" spellcheck="false" href="/"></a>', Hiccdown.to_html([:a, {draggable: false, spellcheck: false, href: '/'}]))
   end
 
   # In data and aria attributes, false means something.
