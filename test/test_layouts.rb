@@ -72,7 +72,8 @@ module LayoutTest
   end
 
   class ApplicationController < ActionController::Base
-    self.view_paths = [File.expand_path('views', __dir__)]
+    # Prepended, so Turbo's frame layout can still be found.
+    prepend_view_path File.expand_path('views', __dir__)
   end
 
   class PagesController < ApplicationController
@@ -160,6 +161,13 @@ class LayoutsTest < Minitest::Test
 
   def test_explicit_helper_layout
     assert_equal '<nav><p>explicit</p></nav>', get(LayoutTest::NamedController, :explicit)
+  end
+
+  # Turbo gives frame requests a minimal layout of its own, with a layout
+  # method that Hiccdown once overrode by forcing a layout (see `fef00cb`).
+  def test_turbo_frame_request_gets_turbo_frame_layout
+    _status, html = request(LayoutTest::PagesController, :show, headers: { 'HTTP_TURBO_FRAME' => 'page' })
+    assert_equal '<html><head></head><body><p>page</p></body></html>', html.gsub(/\s+/, '')
   end
 
   private

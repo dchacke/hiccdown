@@ -12,4 +12,7 @@ Gem::Specification.new do |s|
   # Tested against each of these with the Gemfiles in `gemfiles`.
   s.add_dependency 'actionview', '>= 7.0', '< 9'
   s.add_dependency 'activesupport', '>= 7.0', '< 9'
+
+  # Hiccdown has to leave the layouts of Turbo's frame and stream requests be.
+  s.add_development_dependency 'turbo-rails'
 end

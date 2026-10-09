@@ -5,6 +5,7 @@ require 'action_controller/railtie'
 # Hiccdown loads its railtie only when Rails is already loaded, which it isn't
 # when the first line above runs.
 require 'hiccdown/railtie'
+require 'turbo-rails'
 require 'active_support/core_ext/string/output_safety'
 require 'minitest/autorun'
 require_relative 'factories/record'
@@ -40,8 +41,8 @@ end
 module ControllerRequests
   # The router would set the action in the params, which `routed: false`
   # leaves out.
-  def request controller, action, routed: true
-    env = Rack::MockRequest.env_for('/')
+  def request controller, action, routed: true, headers: {}
+    env = Rack::MockRequest.env_for('/', headers)
     env['action_dispatch.request.path_parameters'] = { action: action.to_s } if routed
     status, _headers, body = controller.action(action).call(env)
     html = +''
