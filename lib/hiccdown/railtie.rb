@@ -3,6 +3,7 @@ module Hiccdown
     initializer 'hiccdown.action_controller' do
       ActiveSupport.on_load(:action_controller) do
         include CustomViewRendering
+        include LayoutRendering
 
         # Per https://stackoverflow.com/a/78783866/1371131
         ActionController::Renderers.add :hiccdown do |src, options|
@@ -28,6 +29,95 @@ module Hiccdown
 
     def format
       :html
+    end
+  end
+
+  # Stands in for a layout file, as `<Name>Helper#layout`. Rails renders it
+  # like one, with a block that yields the page's content or, given a name,
+  # its `content_for` section, so `yield` and `yield(:title)` work as they
+  # do in an ERB layout.
+  class Layout
+    # The block says whether a layout file of the same name exists too, which
+    # the helper takes precedence over.
+    def self.for name, logger = nil
+      helper_module = "#{name.camelize}Helper".safe_constantize
+
+      unless helper_module.is_a?(Module) && helper_module.instance_methods(false).include?(:layout)
+        return nil
+      end
+
+      layout = new(helper_module)
+
+      if block_given? && yield
+        logger&.warn "Hiccdown: #{layout.identifier} takes precedence over the layout file layouts/#{name}, which can be deleted."
+      end
+
+      layout
+    end
+
+    def initialize helper_module
+      @helper_module = helper_module
+    end
+
+    def render view, _locals, &block
+      content = @helper_module.instance_method(:layout).bind_call(view, &block)
+      html = Hiccdown.to_html(content)
+
+      # Without a doctype, browsers render the page in quirks mode, so
+      # Hiccdown adds it rather than have every layout spell it out.
+      if content.is_a?(Array) && content.first == :html
+        html = "<!DOCTYPE html>#{html}"
+      end
+
+      html.html_safe
+    end
+
+    def identifier
+      "#{@helper_module.name}#layout"
+    end
+
+    alias_method :virtual_path, :identifier
+  end
+
+  module LayoutRendering
+    private
+
+    # Unless told otherwise, Rails looks for a layout named after the
+    # controller, then after each of its parents, through the lookup context's
+    # `find_all`. Answering those lookups with helper layouts where they exist
+    # keeps that order, so a controller's own layout file still comes before
+    # the application's helper layout while views move over gradually.
+    def _default_layout lookup_context, *args
+      super(LayoutLookup.new(lookup_context, logger), *args)
+    end
+
+    # Named layouts, as in `layout 'admin'` or `render layout: 'admin'`.
+    def _normalize_layout value
+      value = super
+
+      if value.is_a?(String) && value.start_with?('layouts/')
+        Layout.for(value.delete_prefix('layouts/'), logger) { lookup_context.exists?(value) } || value
+      else
+        value
+      end
+    end
+  end
+
+  class LayoutLookup < SimpleDelegator
+    def initialize lookup_context, logger
+      super(lookup_context)
+      @logger = logger
+    end
+
+    def find_all name, prefixes = [], *rest
+      templates = super
+
+      if prefixes == ['layouts']
+        layout = Layout.for(name, @logger) { templates.any? }
+        layout ? [layout] : templates
+      else
+        templates
+      end
     end
   end
 

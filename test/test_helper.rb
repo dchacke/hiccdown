@@ -2,6 +2,9 @@ require 'hiccdown'
 require 'minitest/autorun'
 require 'rails'
 require 'action_controller/railtie'
+# Hiccdown loads its railtie only when Rails is already loaded, which it isn't
+# when the first line above runs.
+require 'hiccdown/railtie'
 require 'active_support/core_ext/string/output_safety'
 require 'minitest/autorun'
 require_relative 'factories/record'

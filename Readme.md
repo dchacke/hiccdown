@@ -180,6 +180,26 @@ Hiccdown *can* be used inside .erb templates, but that’s discouraged:
 
 (Be careful with `html_safe`.)
 
+### Layouts
+
+Layouts live in helper methods called `layout`, too. `yield` gives you the page’s content and `yield(:title)` whatever was set with `content_for(:title)`, just like in an `erb` layout:
+
+```ruby
+module ApplicationHelper
+  def layout
+    [:html,
+      [:head,
+        [:title, yield(:title)],
+        csrf_meta_tags],
+      [:body, yield]]
+  end
+end
+```
+
+Hiccdown adds `<!DOCTYPE html>` to layouts whose root is `:html`.
+
+Layouts are found the way Rails finds layout files: a layout named `products` lives in `ProductsHelper#layout` instead of `app/views/layouts/products.html.erb`. So `ProductsController` uses `ProductsHelper#layout` if there is one, and `ApplicationHelper#layout` otherwise, and `layout 'admin'` uses `AdminHelper#layout`.
+
 ### Usage with additional helper methods
 
 Since Hiccdown code lives inside helpers anyway, simply use additional helper methods in your Hiccdown code:
@@ -329,6 +349,8 @@ end
 ```
 
 Lastly, delete `_product.html.erb`.
+
+The same goes for layouts. Helper layouts wrap `erb` views and `erb` layouts wrap Hiccdown views. Rails looks for a layout named after the controller first, then after each of its parents, so a `products.html.erb` layout file still comes before `ApplicationHelper#layout`. Where a layout exists both as a helper method and as a file, the helper method is used and a warning is logged, so you can delete the file.
 
 ### Usage with turbo streams
 
