@@ -137,6 +137,10 @@ module Hiccdown
       # Implicit rendering
       if options.empty? && args.empty?
         custom_default_render
+      # Options that only say how to render the action, such as
+      # `render status: :not_found` or `render layout: 'admin'`
+      elsif args.empty? && !renders_content?(options)
+        render_helper_method(action_name, options)
       # Explicit rendering, such as `render :show` or `render action: :show`,
       # but not partials or files (which would include a /)
       elsif options.key?(:action) || args.first.is_a?(Symbol) || (args.first.is_a?(String) && !args.first.include?('/'))
@@ -156,7 +160,15 @@ module Hiccdown
       render_helper_method(params[:action])
     end
 
+    # Options that say what to render, besides those of renderers like `json:`
+    # and `hiccdown:`.
+    CONTENT_OPTIONS = %i[action template partial file inline plain html body renderable].freeze
+
     private
+
+    def renders_content? options
+      options.keys.any? { |key| CONTENT_OPTIONS.include?(key) || ActionController::Renderers::RENDERERS.include?(key) }
+    end
 
     def render_helper_method action_name, options = {}
       helper_name = "#{controller_path.camelize}Helper"

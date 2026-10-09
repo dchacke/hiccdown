@@ -33,6 +33,19 @@ class HiccdownTest < Minitest::Test
   end
 end
 
+# Runs a controller action as a request would, returning its status and body.
+module ControllerRequests
+  def request controller, action
+    # Hiccdown finds the action's helper method by the action in the params,
+    # which the router would otherwise set.
+    env = Rack::MockRequest.env_for('/', 'action_dispatch.request.path_parameters' => { action: action.to_s })
+    status, _headers, body = controller.action(action).call(env)
+    html = +''
+    body.each { |part| html << part }
+    [status, html]
+  end
+end
+
 # Create a minimal Rails application
 class TestApp < Rails::Application
   config.eager_load = false

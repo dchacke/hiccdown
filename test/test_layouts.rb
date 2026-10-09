@@ -110,6 +110,8 @@ module LayoutTest
 end
 
 class LayoutsTest < Minitest::Test
+  include ControllerRequests
+
   def setup
     @log = StringIO.new
     @logger = ActionController::Base.logger
@@ -163,12 +165,6 @@ class LayoutsTest < Minitest::Test
   private
 
   def get controller, action = :show
-    # Hiccdown finds the action's helper method by the action in the params,
-    # which the router would otherwise set.
-    env = Rack::MockRequest.env_for('/', 'action_dispatch.request.path_parameters' => { action: action.to_s })
-    _status, _headers, body = controller.action(action).call(env)
-    html = +''
-    body.each { |part| html << part }
-    html
+    request(controller, action).last
   end
 end
