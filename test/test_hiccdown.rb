@@ -139,6 +139,48 @@ class HiccdownTest < Minitest::Test
     assert_equal('<strong>bar</strong>', Hiccdown.to_html([nil, [:strong, 'bar']]))
   end
 
+  # Hiccup's shorthand for ids and classes in the tag
+  def test_shorthand_id
+    assert_equal('<div id="my-id"></div>', Hiccdown.to_html([:'div#my-id']))
+  end
+
+  def test_shorthand_classes
+    assert_equal('<div class="my-class another-class"></div>', Hiccdown.to_html([:'div.my-class.another-class']))
+  end
+
+  def test_shorthand_id_and_classes
+    assert_equal('<div id="my-id" class="my-class another-class"></div>', Hiccdown.to_html([:'div#my-id.my-class.another-class']))
+  end
+
+  def test_shorthand_in_any_order
+    assert_equal('<div id="my-id" class="my-class another-class"></div>', Hiccdown.to_html([:'div.my-class#my-id.another-class']))
+  end
+
+  def test_shorthand_with_attrs
+    assert_equal('<div id="override" class="my-class another-class additive"></div>',
+      Hiccdown.to_html([:'div#my-id.my-class.another-class', {id: 'override', class: 'additive'}]))
+  end
+
+  def test_shorthand_with_class_array
+    assert_equal('<div class="a b"></div>', Hiccdown.to_html([:'div.a', {class: ['b', nil]}]))
+  end
+
+  def test_shorthand_with_other_attrs_and_children
+    assert_equal('<a class="link" href="/x">x</a>', Hiccdown.to_html([:'a.link', {href: '/x'}, 'x']))
+  end
+
+  def test_shorthand_with_children
+    assert_equal('<p class="lead">Hi</p>', Hiccdown.to_html([:'p.lead', 'Hi']))
+  end
+
+  def test_shorthand_on_standalone_tag
+    assert_equal('<img class="photo" src="x.png"/>', Hiccdown.to_html([:'img.photo', {src: 'x.png'}]))
+  end
+
+  def test_shorthand_with_two_ids
+    assert_raises(ArgumentError) { Hiccdown.to_html([:'div#a#b']) }
+  end
+
   # ---------------------------------------------------------------------------
 
   # Testing that Rails helper methods are properly intercepted

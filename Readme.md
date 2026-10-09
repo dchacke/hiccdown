@@ -84,6 +84,14 @@ Hiccdown.to_html [:div, [:h1, 'hello world'], [:h2, 'hello again']]
 Hiccdown.to_html [:h1, {class: 'heading big'}, 'hello world']
 # => '<h1 class="heading big">hello world</h1>'
 
+# ids and classes in the tag, in any order
+Hiccdown.to_html [:'h1#title.heading.big', 'hello world']
+# => '<h1 id="title" class="heading big">hello world</h1>'
+
+# an id in the attributes wins, and their classes are added
+Hiccdown.to_html [:'h1#title.heading', {id: 'main', class: 'big'}, 'hello world']
+# => '<h1 id="main" class="heading big">hello world</h1>'
+
 # children as arrays
 Hiccdown.to_html [:ul, [[:li, 'first'], [:li, 'second']]]
 # => '<ul><li>first</li><li>second</li></ul>'

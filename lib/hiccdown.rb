@@ -103,6 +103,8 @@ module Hiccdown
         return structure.map { |s| to_html(s, escape) }.join
       end
 
+      structure = expand_shorthand(structure) if structure.first.to_s.match?(/[#.]/)
+
       if structure[1].is_a? Hash
         tag, attrs, *children = structure.map { |s| to_html(s, escape) }
         tag_and_attrs = structure[1].any? ? [tag, ' ', attrs].join : tag
@@ -118,6 +120,38 @@ module Hiccdown
     else
       self.maybe_escape(structure.to_s, escape)
     end
+  end
+
+  # Hiccup's shorthand for ids and classes, as in `:'div#main.big.red'`, in
+  # any order after the tag name. An id in the attributes takes precedence,
+  # and their classes are added to the shorthand's.
+  def self.expand_shorthand structure
+    tag, *parts = structure.first.to_s.split(/(?=[#.])/)
+    ids, classes = parts.partition { |part| part.start_with?('#') }
+
+    if ids.size > 1
+      raise ArgumentError, "#{structure.first.inspect} has more than one id"
+    end
+
+    attrs = {}
+    attrs[:id] = ids.first.delete_prefix('#') if ids.any?
+    attrs[:class] = classes.map { |c| c.delete_prefix('.') } if classes.any?
+
+    rest = structure.drop(1)
+
+    if rest.first.is_a?(Hash)
+      rest.shift.each do |key, value|
+        key = key.to_sym if %w[id class].include?(key.to_s)
+
+        if key == :class && attrs[:class]
+          attrs[:class] += Array(value)
+        else
+          attrs[key] = value
+        end
+      end
+    end
+
+    [tag.to_sym, attrs, *rest]
   end
 
   def self.maybe_escape escapable, escape
