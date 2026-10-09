@@ -117,6 +117,12 @@ class HiccdownTest < Minitest::Test
     assert_equal('0.5<strong>bar</strong>', Hiccdown.to_html([0.5, [:strong, 'bar']]))
   end
 
+  # A first element that's nil, such as what an empty block returns, used to
+  # be taken for a tag name and rendered as '<>'.
+  def test_nil_for_first_element
+    assert_equal('<strong>bar</strong>', Hiccdown.to_html([nil, [:strong, 'bar']]))
+  end
+
   # ---------------------------------------------------------------------------
 
   # Testing that Rails helper methods are properly intercepted
