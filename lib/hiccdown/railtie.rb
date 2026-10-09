@@ -13,22 +13,35 @@ module Hiccdown
     end
   end
 
+  # An action's helper method's result, which the controller computes before
+  # rendering it, so it can decide the format.
   class Renderable
-    def initialize(helper_module, action_name)
-      @helper_module = helper_module
-      @action_name = action_name
+    attr_reader :format
+
+    def initialize(content, format)
+      @content = content
+      @format = format
     end
 
-    # This is the view-bound view_context. Needed for `content_for` to work
-    # properly in helper, see https://stackoverflow.com/a/78783866/1371131
-    def render_in(view_context)
-      content = @helper_module.instance_method(@action_name).bind_call(view_context)
-
-      Hiccdown.to_html(content)
+    def render_in(_view_context)
+      Hiccdown.to_html(@content)
     end
 
-    def format
-      :html
+    # Whether content is one or more turbo streams, in Hiccdown or as
+    # turbo-rails' `turbo_stream` helper renders them.
+    def self.turbo_streams? content
+      case content
+      when Array
+        if content.first.is_a?(Symbol)
+          content.first == :'turbo-stream'
+        else
+          content.any? && content.all? { |c| turbo_streams?(c) }
+        end
+      when String
+        content.lstrip.start_with?('<turbo-stream')
+      else
+        false
+      end
     end
   end
 
@@ -37,6 +50,12 @@ module Hiccdown
   # its `content_for` section, so `yield` and `yield(:title)` work as they
   # do in an ERB layout.
   class Layout
+    # Helper layouts are HTML, so they only wrap HTML, not turbo streams or
+    # other formats, for which Rails would otherwise find no layout.
+    def self.formats? formats
+      Array(formats).first == :html
+    end
+
     # The block says whether a layout file of the same name exists too, which
     # the helper takes precedence over.
     def self.for name, logger = nil
@@ -92,11 +111,26 @@ module Hiccdown
     end
 
     # Named layouts, as in `layout 'admin'` or `render layout: 'admin'`.
+    # Rails resolves a proc once it knows the format of the response, which
+    # decides whether a helper layout applies.
     def _normalize_layout value
       value = super
 
       if value.is_a?(String) && value.start_with?('layouts/')
-        Layout.for(value.delete_prefix('layouts/'), logger) { lookup_context.exists?(value) } || value
+        logger = self.logger
+
+        proc do |lookup_context, formats|
+          name = value.delete_prefix('layouts/')
+          file = lookup_context.exists?(value, [], false, [], formats: formats)
+
+          if Layout.formats?(formats)
+            Layout.for(name, logger) { file } || value
+          # Other formats get no layout from a helper layout, as from an ERB
+          # layout that's only HTML.
+          elsif file || !Layout.for(name)
+            value
+          end
+        end
       else
         value
       end
@@ -111,8 +145,9 @@ module Hiccdown
 
     def find_all name, prefixes = [], *rest
       templates = super
+      options = rest.last.is_a?(Hash) ? rest.last : {}
 
-      if prefixes == ['layouts']
+      if prefixes == ['layouts'] && Layout.formats?(options[:formats])
         layout = Layout.for(name, @logger) { templates.any? }
         layout ? [layout] : templates
       else
@@ -180,13 +215,29 @@ module Hiccdown
       helper_module = helper_name.constantize
 
       if helper_module.instance_methods(false).include?(action_name.to_sym)
-        original_render(
-          Hiccdown::Renderable.new(helper_module, action_name),
-          options
-        )
+        render_hiccdown(helper_module, action_name, options)
       else
         original_render({ action: action_name }.merge(options))
       end
+    end
+
+    # The helper method runs before rendering, so its result can decide the
+    # format: turbo streams answer requests that take them as streams, without
+    # a layout, and everything else is HTML. It runs in the view context that
+    # then renders it, so that `content_for` reaches the layout (see
+    # https://stackoverflow.com/a/78783866/1371131).
+    def render_hiccdown helper_module, action_name, options
+      @_hiccdown_view_context = view_context
+      content = helper_module.instance_method(action_name).bind_call(@_hiccdown_view_context)
+      stream = formats.include?(:turbo_stream) && Hiccdown::Renderable.turbo_streams?(content)
+
+      original_render(Hiccdown::Renderable.new(content, stream ? :turbo_stream : :html), options)
+    ensure
+      @_hiccdown_view_context = nil
+    end
+
+    def view_context
+      @_hiccdown_view_context || super
     end
   end
 end

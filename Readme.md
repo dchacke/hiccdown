@@ -398,6 +398,20 @@ end
 ts(:update, dom_id(@product), product(@product))
 ```
 
+An action's helper method can answer with turbo streams, too. When it returns one or more, in Hiccdown or from `turbo_stream`, and the request takes turbo streams, as Turbo's form submissions do, Hiccdown sends them as such, without a layout:
+
+```ruby
+module ProductsHelper
+  def update
+    if @product.valid?
+      ts(:update, dom_id(@product), product(@product))
+    else
+      edit # A page, in its layout
+    end
+  end
+end
+```
+
 ## HTML escape
 
 Hiccdown escapes HTML characters in attribute values and primitive children. You can override this behavior by passing `false` as the second parameter:
