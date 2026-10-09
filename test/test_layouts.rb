@@ -48,6 +48,17 @@ module LayoutTest
     end
   end
 
+  # Written with the shorthand for ids and classes.
+  module ShorthandHelper
+    def show
+      [:p, 'shorthand']
+    end
+
+    def layout
+      [:'html.no-js', [:body, yield]]
+    end
+  end
+
   # A named layout.
   module AdminHelper
     def layout
@@ -108,6 +119,10 @@ module LayoutTest
 
     def show; end
   end
+
+  class ShorthandController < ApplicationController
+    def show; end
+  end
 end
 
 class LayoutsTest < Minitest::Test
@@ -126,6 +141,11 @@ class LayoutsTest < Minitest::Test
   def test_application_helper_layout
     assert_equal '<!DOCTYPE html><html><head><title>Page</title></head><body><p>page</p></body></html>',
       get(LayoutTest::PagesController)
+  end
+
+  def test_doctype_for_html_root_in_shorthand
+    assert_equal '<!DOCTYPE html><html class="no-js"><body><p>shorthand</p></body></html>',
+      get(LayoutTest::ShorthandController)
   end
 
   def test_application_helper_layout_around_erb_view

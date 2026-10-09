@@ -56,7 +56,7 @@ module Hiccdown
         # `link_to([:span, 'foo'], path)` or a helper that yields into one of
         # them, skips `capture` and ends up here.
         define_method(:content_tag_string) do |name, content, options, escape = true|
-          content = Hiccdown.to_html(content).html_safe if content.is_a?(Array)
+          content = Hiccdown.to_html(content, escape).html_safe if content.is_a?(Array)
           super(name, content, options, escape)
         end
       end
@@ -73,11 +73,25 @@ module Hiccdown
     STANDALONE_TAGS
   end
 
-  def self.process_attributes(hash, prefix = nil, escape)
-    hash.map do |key, value|
-      attribute_key = prefix ? "#{prefix}-#{key}" : key.to_s
+  # Characters a tag or attribute name can't contain, since they'd end it.
+  UNSAFE_NAME_CHARACTERS = /[\s"'<>\/=\x00-\x1f\x7f]/
 
-      if value.is_a?(Hash)
+  # Names aren't content, so they're made safe whether or not content is
+  # escaped, as Rails does.
+  def self.name_escape name
+    name.to_s.gsub(UNSAFE_NAME_CHARACTERS, '_')
+  end
+
+  def self.process_attributes(hash, prefix = nil, escape)
+    hash.flat_map do |key, value|
+      attribute_key = name_escape(prefix ? "#{prefix}-#{key}" : key)
+
+      # As in Rails, nil leaves an attribute out, and so does false, since
+      # `disabled="false"` would still disable. In nested attributes, like
+      # data and aria ones, false means something, so it stays.
+      if value.nil? || (value == false && !prefix)
+        []
+      elsif value.is_a?(Hash)
         process_attributes(value, attribute_key, escape)
       elsif value.is_a?(Array)
         value_str = value
@@ -85,10 +99,10 @@ module Hiccdown
           .map { |v| maybe_escape(v.to_s, escape) }
           .join(' ')
 
-        %{#{attribute_key}="#{value_str}"}
+        [%{#{attribute_key}="#{value_str}"}]
       else
         value_str = maybe_escape(value.to_s, escape)
-        %{#{attribute_key}="#{value_str}"}
+        [%{#{attribute_key}="#{value_str}"}]
       end
     end
   end
@@ -105,17 +119,23 @@ module Hiccdown
 
       structure = expand_shorthand(structure) if structure.first.to_s.match?(/[#.]/)
 
+      tag = name_escape(structure.first)
+
       if structure[1].is_a? Hash
-        tag, attrs, *children = structure.map { |s| to_html(s, escape) }
-        tag_and_attrs = structure[1].any? ? [tag, ' ', attrs].join : tag
+        attrs = process_attributes(structure[1], nil, escape).join(' ')
+        children = structure.drop(2)
       else
-        tag, *children = structure.map { |s| to_html(s, escape) }
+        attrs = ''
+        children = structure.drop(1)
       end
 
+      tag_and_attrs = attrs.empty? ? tag : [tag, ' ', attrs].join
+      children = children.map { |s| to_html(s, escape) }
+
       if standalone_tags.include? tag.to_sym
-        ['<', tag_and_attrs || tag, '/>'].join
+        ['<', tag_and_attrs, '/>'].join
       else
-        ['<', tag_and_attrs || tag, '>', children.join, '</', tag, '>'].join
+        ['<', tag_and_attrs, '>', children.join, '</', tag, '>'].join
       end
     else
       self.maybe_escape(structure.to_s, escape)

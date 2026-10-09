@@ -385,7 +385,7 @@ turbo_stream.update(@product, partial: 'products/product', locals: { product: @p
 You now pass Hiccdown by invoking the helper method that replaces the partial:
 
 ```ruby
-turbo_stream.update(@product, hiccdown: product(@product)
+turbo_stream.update(@product, hiccdown: product(@product))
 ```
 
 Or pass a Hiccdown structure directly:
@@ -441,7 +441,7 @@ Hiccdown does not escape strings marked as `html_safe`. This can be useful when 
 
 ## Hiccup extensions
 
-For convenience, Hiccdown extends Hiccup in three ways:
+For convenience, Hiccdown extends Hiccup in four ways:
 
 1. Deeply nested attribute hashes result in hyphenated attribute keys. This is useful for constructing data attributes. For example:
 
@@ -472,6 +472,13 @@ Hiccdown.to_html([:div, { data: { foo: ['bar', :baz] } }])
 
     Hiccdown.to_html(['foo', [:div, 'bar']])
     # => 'foo<div>bar</div>'
+    ```
+
+4. As in Rails, attributes that are `nil` or `false` are left out, so they can be set conditionally. In nested attributes, like data and aria ones, `false` means something, so it stays:
+
+    ```ruby
+    Hiccdown.to_html([:button, { disabled: false, data: { open: false } }, 'Open'])
+    # => '<button data-open="false">Open</button>'
     ```
 
 ## Contributing

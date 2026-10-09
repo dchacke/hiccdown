@@ -66,4 +66,9 @@ class RenderingTest::Test < Minitest::Test
   def test_render_with_content_option
     assert_equal [202, 'plain'], request(RenderingTest::ProductsController, :plain)
   end
+
+  # Hiccdown overrides it, and others call it from outside the controller.
+  def test_view_context_stays_public
+    assert RenderingTest::ProductsController.public_method_defined?(:view_context)
+  end
 end

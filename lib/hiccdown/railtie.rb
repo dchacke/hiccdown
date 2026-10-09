@@ -84,7 +84,7 @@ module Hiccdown
 
       # Without a doctype, browsers render the page in quirks mode, so
       # Hiccdown adds it rather than have every layout spell it out.
-      if content.is_a?(Array) && content.first == :html
+      if content.is_a?(Array) && content.first.is_a?(Symbol) && content.first.to_s[/\A[^#.]*/] == 'html'
         html = "<!DOCTYPE html>#{html}"
       end
 
@@ -179,12 +179,10 @@ module Hiccdown
       # Explicit rendering, such as `render :show` or `render action: :show`,
       # but not partials or files (which would include a /)
       elsif options.key?(:action) || args.first.is_a?(Symbol) || (args.first.is_a?(String) && !args.first.include?('/'))
-        action_name = options[:action] || args.first.to_s
-        render_helper_method(action_name, options)
+        render_helper_method((options[:action] || args.first).to_s, options)
       # When a template is given but doesn’t exist. Useful for gems like High Voltage
       elsif options.key?(:template) && !view_context.lookup_context.template_exists?(options[:template])
-        action_name = options[:template].split('/').last
-        render_helper_method(action_name, options)
+        render_helper_method(options[:template].split('/').last, options)
       # Partials, files and all other cases
       else
         original_render(*args, options)
@@ -193,6 +191,12 @@ module Hiccdown
 
     def custom_default_render
       render_helper_method(action_name)
+    end
+
+    # The view context that renders an action's helper method, while it
+    # does, so the method and the rendering share it.
+    def view_context
+      @_hiccdown_view_context || super
     end
 
     # Options that say what to render, besides those of renderers like `json:`
@@ -234,10 +238,6 @@ module Hiccdown
       original_render(Hiccdown::Renderable.new(content, stream ? :turbo_stream : :html), options)
     ensure
       @_hiccdown_view_context = nil
-    end
-
-    def view_context
-      @_hiccdown_view_context || super
     end
   end
 end

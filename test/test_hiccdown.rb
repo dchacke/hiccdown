@@ -117,6 +117,35 @@ class HiccdownTest < Minitest::Test
     assert_equal('<div class="foo bar"></div>', Hiccdown.to_html([:div, class: ['foo', nil, '', 'bar']]))
   end
 
+  # As in Rails: an attribute that's nil or false is left out, since
+  # `disabled="false"` would still disable.
+  def test_nil_and_false_attrs_are_left_out
+    assert_equal('<input type="text"/>', Hiccdown.to_html([:input, {type: 'text', disabled: false, value: nil}]))
+  end
+
+  # In data and aria attributes, false means something.
+  def test_false_nested_attrs_are_kept
+    assert_equal('<div data-open="false" aria-hidden="false"></div>', Hiccdown.to_html([:div, {data: {open: false, foo: nil}, aria: {hidden: false}}]))
+  end
+
+  # Names can't break out of the tag, whatever they contain.
+  def test_attr_names_are_sanitized
+    assert_equal('<div x__onmouseover__alert(1)_="y"></div>', Hiccdown.to_html([:div, {'x" onmouseover="alert(1)"' => 'y'}]))
+  end
+
+  def test_nested_attr_names_are_sanitized
+    assert_equal('<div data-a_b="c"></div>', Hiccdown.to_html([:div, {data: {'a b' => 'c'}}]))
+  end
+
+  def test_tag_names_are_sanitized
+    assert_equal('<div__script>x</div__script>', Hiccdown.to_html([:'div><script', 'x']))
+  end
+
+  # Names that frameworks like Alpine.js use stay as they are.
+  def test_attr_names_with_at_and_colon
+    assert_equal('<button @click="open = true" :class="x"></button>', Hiccdown.to_html([:button, {'@click' => 'open = true', ':class' => 'x'}]))
+  end
+
   def test_top_level_array_with_array_elements
     assert_equal('<div>foo</div><strong>bar</strong>', Hiccdown.to_html([[:div, 'foo'], [:strong, 'bar']]))
   end
@@ -220,6 +249,10 @@ class HiccdownTest < Minitest::Test
 
   def test_content_tag_escapes_hiccdown_content
     assert_equal %{<div><span>&lt;b&gt;</span></div>}, @helper.content_tag(:div, [:span, '<b>'])
+  end
+
+  def test_content_tag_without_escaping_hiccdown_content
+    assert_equal %{<div><span><b></span></div>}, @helper.content_tag(:div, [:span, '<b>'], nil, false)
   end
 
   def test_tag_builder_with_hiccdown_content
