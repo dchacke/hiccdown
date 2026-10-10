@@ -224,6 +224,8 @@ end
 
 A text part still comes from a template, like `app/views/user_mailer/welcome.text.erb`, if there is one. Mailer layouts are found as in controllers, so `layout 'mailer'` uses `MailerHelper#layout` for HTML and `app/views/layouts/mailer.text.erb` for text.
 
+Mailers don't include `ApplicationHelper`, so include `Hiccdown::ViewHelpers` in a helper they use too, such as `MailerHelper`, for Rails helpers with blocks, like `content_for(:footer) { [...] }`, to take Hiccdown.
+
 ### Usage with additional helper methods
 
 Since Hiccdown code lives inside helpers anyway, simply use additional helper methods in your Hiccdown code:
