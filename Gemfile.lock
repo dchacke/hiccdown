@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hiccdown (2.0.0)
+    hiccdown (2.1.0)
       actionview (>= 7.0, < 9)
       activesupport (>= 7.0, < 9)
 

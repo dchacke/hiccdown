@@ -1,10 +1,11 @@
 # Changelog
 
-## Unreleased
+## 2.1.0
 
 ### New
 
-- Mailers render HTML from helper methods, as controllers do: the HTML part of `UserMailer#welcome` comes from `UserMailerHelper#welcome`, and `layout 'mailer'` can live in `MailerHelper#layout`. Text parts and their layouts still come from templates.
+- Mailers render HTML from helper methods, as controllers do: the HTML part of `UserMailer#welcome` comes from `UserMailerHelper#welcome`, and `layout 'mailer'` can live in `MailerHelper#layout`. A helper method takes precedence over an HTML template of the same name, and `mail { |format| format.html }` uses it too. Text parts and their layouts still come from templates, so an email can have its HTML from a helper and its text from a file.
+- Mailers don't include `ApplicationHelper`, so include `Hiccdown::ViewHelpers` in a helper they use, such as `MailerHelper`, for helpers with blocks, like `content_for`, to take Hiccdown there.
 
 ## 2.0.0
 
