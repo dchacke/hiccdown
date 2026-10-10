@@ -9,10 +9,13 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/dchacke/hiccdown'
   s.license     = 'MIT'
 
+  # The oldest Ruby that Rails 7.0 supports
+  s.required_ruby_version = '>= 2.7'
+
   # Tested against each of these with the Gemfiles in `gemfiles`.
   s.add_dependency 'actionview', '>= 7.0', '< 9'
   s.add_dependency 'activesupport', '>= 7.0', '< 9'
 
   # Hiccdown has to leave the layouts of Turbo's frame and stream requests be.
-  s.add_development_dependency 'turbo-rails'
+  s.add_development_dependency 'turbo-rails', '~> 2.0'
 end

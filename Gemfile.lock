@@ -252,7 +252,7 @@ DEPENDENCIES
   propshaft
   puma
   rails (~> 8.1.0)
-  turbo-rails
+  turbo-rails (~> 2.0)
 
 RUBY VERSION
   ruby 3.4.11
