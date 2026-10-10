@@ -210,6 +210,20 @@ Hiccdown adds `<!DOCTYPE html>` to layouts whose root is `:html`.
 
 Layouts are found the way Rails finds layout files: a layout named `products` lives in `ProductsHelper#layout` instead of `app/views/layouts/products.html.erb`. So `ProductsController` uses `ProductsHelper#layout` if there is one, and `ApplicationHelper#layout` otherwise, and `layout 'admin'` uses `AdminHelper#layout`.
 
+### Mailers
+
+Emails work the same way. A mailer's helper is named after it, so the HTML part of `UserMailer#welcome` lives in `UserMailerHelper#welcome`:
+
+```ruby
+module UserMailerHelper
+  def welcome
+    [:p, "Welcome, ", @user.name]
+  end
+end
+```
+
+A text part still comes from a template, like `app/views/user_mailer/welcome.text.erb`, if there is one. Mailer layouts are found as in controllers, so `layout 'mailer'` uses `MailerHelper#layout` for HTML and `app/views/layouts/mailer.text.erb` for text.
+
 ### Usage with additional helper methods
 
 Since Hiccdown code lives inside helpers anyway, simply use additional helper methods in your Hiccdown code:

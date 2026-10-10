@@ -2,6 +2,7 @@ require 'hiccdown'
 require 'minitest/autorun'
 require 'rails'
 require 'action_controller/railtie'
+require 'action_mailer/railtie'
 # Hiccdown loads its railtie only when Rails is already loaded, which it isn't
 # when the first line above runs.
 require 'hiccdown/railtie'

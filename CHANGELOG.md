@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### New
+
+- Mailers render HTML from helper methods, as controllers do: the HTML part of `UserMailer#welcome` comes from `UserMailerHelper#welcome`, and `layout 'mailer'` can live in `MailerHelper#layout`. Text parts and their layouts still come from templates.
+
 ## 2.0.0
 
 Compared with 1.5.4.

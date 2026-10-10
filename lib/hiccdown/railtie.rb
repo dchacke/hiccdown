@@ -11,6 +11,14 @@ module Hiccdown
         end
       end
     end
+
+    initializer 'hiccdown.action_mailer' do
+      ActiveSupport.on_load(:action_mailer) do
+        # Prepended, since ActionMailer::Base defines the methods it overrides
+        prepend MailerRendering
+        include LayoutRendering
+      end
+    end
   end
 
   # An action's helper method's result, which the controller computes before
@@ -96,6 +104,70 @@ module Hiccdown
     end
 
     alias_method :virtual_path, :identifier
+  end
+
+  # Stands in for an email's HTML template, as `<Mailer>Helper#<action>`,
+  # which Rails renders like a template file, layout and all.
+  class Template
+    def self.for path, name
+      helper_module = "#{path.camelize}Helper".safe_constantize
+
+      if helper_module.is_a?(Module) && helper_module.instance_methods(false).include?(name.to_sym)
+        new(helper_module, name)
+      end
+    end
+
+    def initialize helper_module, name
+      @helper_module = helper_module
+      @name = name
+    end
+
+    def render view, _locals, &_block
+      Hiccdown.to_html(@helper_module.instance_method(@name).bind_call(view)).html_safe
+    end
+
+    def format
+      :html
+    end
+
+    def identifier
+      "#{@helper_module.name}##{@name}"
+    end
+
+    alias_method :virtual_path, :identifier
+  end
+
+  # A mailer's helper is named after it, like a controller's, so the HTML
+  # part of `UserMailer#welcome` comes from `UserMailerHelper#welcome`, if it
+  # has one. Templates in other formats, such as text, still come from files.
+  module MailerRendering
+    private
+
+    def each_template paths, name, &block
+      template = hiccdown_template(paths, name)
+      return super unless template
+
+      others = lookup_context.find_all(name, paths).reject { |t| t.format == :html }
+      [template, *others].uniq(&:format).each(&block)
+    end
+
+    # As in `mail { |format| format.html }`, which renders the action by name.
+    def render *args
+      options = args.last.is_a?(Hash) ? args.last : {}
+      name = options[:action] || args.first
+
+      if (name.is_a?(String) || name.is_a?(Symbol)) && !name.to_s.include?('/') &&
+         lookup_context.formats.first == :html &&
+         (template = hiccdown_template(_prefixes, name.to_s))
+        super(template: template, formats: [:html], **options.except(:action))
+      else
+        super
+      end
+    end
+
+    def hiccdown_template paths, name
+      Array(paths).lazy.filter_map { |path| Template.for(path, name) }.first
+    end
   end
 
   module LayoutRendering
