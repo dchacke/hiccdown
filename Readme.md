@@ -59,7 +59,7 @@ gem 'hiccdown'
 
 Then `$ bundle`.
 
-Hiccdown supports Rails 7.0 through 8.1.
+Hiccdown supports Rails 7.0 through 8.1. See the [changelog](CHANGELOG.md) for what changed between versions, including what to look out for when upgrading to 2.0.0.
 
 ## Usage in Ruby
 
